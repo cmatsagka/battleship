@@ -2,14 +2,7 @@ import { ship } from './ship.js';
 
 export function gameBoard() {
 	const missedShots = [];
-	const board = [];
-
-	for (let i = 0; i < 10; i++) {
-		board[i] = [];
-		for (let j = 0; j < 10; j++) {
-			board[i][j] = null;
-		}
-	}
+	const board = Array.from({ length: 10 }, () => Array(10).fill(null));
 
 	const getSquare = (x, y) => {
 		return board[x][y];
