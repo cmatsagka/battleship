@@ -37,7 +37,21 @@ export function gameBoard() {
 		}
 	};
 
+	const allSunk = () => {
+		ships.forEach((ship) => {
+			if (!ship.isSunk()) return false;
+		});
+		return true;
+	};
+
 	const getMissedShots = () => missedShots;
 
-	return { ships, placeShip, getSquare, receiveAttack, getMissedShots };
+	return {
+		ships,
+		placeShip,
+		getSquare,
+		receiveAttack,
+		getMissedShots,
+		allSunk,
+	};
 }
