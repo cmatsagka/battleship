@@ -1,4 +1,4 @@
-# vanilla-js-template
+# battleship
 
 A professional boilerplate for modern Vanilla JavaScript projects using Webpack.
 
