@@ -32,7 +32,13 @@ export function gameBoard() {
 		return board[x][y];
 	};
 
-	const receiveAttack = (x, y) => {};
+	const receiveAttack = (x, y) => {
+		if (board[x][y] !== null) {
+			return true;
+		} else {
+			return false;
+		}
+	};
 
-	return { ships, placeShip, getSquare };
+	return { ships, placeShip, getSquare, receiveAttack };
 }
