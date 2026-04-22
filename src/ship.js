@@ -1,10 +1,10 @@
 export function ship(length, hits = null, sunk = false) {
 	hits = hit(hits);
 	sunk = isSunk(length, hits);
-	return { length, hits, sunk };
+	return { length, hits, sunk, hit, isSunk };
 }
 
-export const hit = (hits) => {
+const hit = (hits) => {
 	return hits++;
 };
 
