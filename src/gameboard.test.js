@@ -28,12 +28,15 @@ describe('gameBoard factory', () => {
 		expect(board.getSquare(0, 2)).toBe(carrier);
 	});
 
-	test('receives attack', () => {
+	test('receives attack and updates ship', () => {
 		const board = gameBoard();
-		const carrier = board.ships[3];
-		board.placeShip(carrier, 0, 0, 'vertical');
+		const sub = board.ships[0];
+		board.placeShip(sub, 0, 0, 'horizontal');
 
-		expect(board.receiveAttack(0, 1)).toEqual(true);
-		expect(board.receiveAttack(1, 4)).toEqual(false);
+		board.receiveAttack(0, 0);
+		expect(sub.getHits()).toBe(1);
+
+		board.receiveAttack(5, 5);
+		expect(board.getMissedShots()).toContainEqual([5, 5]);
 	});
 });
