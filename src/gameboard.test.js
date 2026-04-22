@@ -40,39 +40,83 @@ describe('gameBoard factory', () => {
 		expect(board.getMissedShots()).toContainEqual([5, 5]);
 	});
 
-	test('receives attack and updates ship', () => {
+	test('reports true when all ships are sunk', () => {
 		const board = gameBoard();
-		const sub = board.ships[0];
-		const carrier = board.ships[1];
 
-		board.placeShip(sub, 0, 0, 'horizontal');
-		board.placeShip(carrier, 1, 0, 'horizontal');
-		board.placeShip(sub, 2, 0, 'horizontal');
-		board.placeShip(carrier, 3, 0, 'horizontal');
-		board.placeShip(sub, 4, 0, 'horizontal');
+		const patrol = board.ships[0];
+		const submarine = board.ships[1];
+		const destroyer = board.ships[2];
+		const battleship = board.ships[3];
+		const carrier = board.ships[4];
+
+		board.placeShip(patrol, 0, 0, 'horizontal');
+		board.placeShip(submarine, 0, 1, 'horizontal');
+		board.placeShip(destroyer, 0, 2, 'horizontal');
+		board.placeShip(battleship, 0, 3, 'horizontal');
+		board.placeShip(carrier, 0, 4, 'horizontal');
 
 		board.receiveAttack(0, 0);
-		board.receiveAttack(0, 1);
-
 		board.receiveAttack(1, 0);
-		board.receiveAttack(1, 1);
-		board.receiveAttack(1, 2);
 
-		board.receiveAttack(2, 0);
+		board.receiveAttack(0, 1);
+		board.receiveAttack(1, 1);
 		board.receiveAttack(2, 1);
+
+		board.receiveAttack(0, 2);
+		board.receiveAttack(1, 2);
 		board.receiveAttack(2, 2);
 
-		board.receiveAttack(3, 0);
-		board.receiveAttack(3, 1);
-		board.receiveAttack(3, 2);
+		board.receiveAttack(0, 3);
+		board.receiveAttack(1, 3);
+		board.receiveAttack(2, 3);
 		board.receiveAttack(3, 3);
 
-		board.receiveAttack(4, 0);
-		board.receiveAttack(4, 1);
-		board.receiveAttack(4, 2);
-		board.receiveAttack(4, 3);
+		board.receiveAttack(0, 4);
+		board.receiveAttack(1, 4);
+		board.receiveAttack(2, 4);
+		board.receiveAttack(3, 4);
 		board.receiveAttack(4, 4);
 
-		expect(board.allSunk()).toEqual(true);
+		expect(board.allSunk()).toBe(true);
+	});
+
+	test('reports false when some ships are still afloat', () => {
+		const board = gameBoard();
+
+		const patrol = board.ships[0];
+		const submarine = board.ships[1];
+		const destroyer = board.ships[2];
+		const battleship = board.ships[3];
+		const carrier = board.ships[4];
+
+		board.placeShip(patrol, 0, 0, 'horizontal');
+		board.placeShip(submarine, 0, 1, 'horizontal');
+		board.placeShip(destroyer, 0, 2, 'horizontal');
+		board.placeShip(battleship, 0, 3, 'horizontal');
+		board.placeShip(carrier, 0, 4, 'horizontal');
+
+		board.receiveAttack(0, 0);
+		board.receiveAttack(1, 0);
+
+		board.receiveAttack(0, 1);
+		board.receiveAttack(1, 1);
+		board.receiveAttack(2, 1);
+
+		board.receiveAttack(0, 2);
+		board.receiveAttack(1, 2);
+		board.receiveAttack(2, 2);
+
+		board.receiveAttack(0, 3);
+		board.receiveAttack(1, 3);
+		board.receiveAttack(2, 3);
+		board.receiveAttack(3, 3);
+
+		board.receiveAttack(0, 4);
+		board.receiveAttack(1, 4);
+		board.receiveAttack(2, 4);
+		board.receiveAttack(3, 4);
+		board.receiveAttack(6, 4);
+
+		expect(board.allSunk()).toEqual(false);
 	});
 });

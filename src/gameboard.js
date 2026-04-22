@@ -38,10 +38,7 @@ export function gameBoard() {
 	};
 
 	const allSunk = () => {
-		ships.forEach((ship) => {
-			if (!ship.isSunk()) return false;
-		});
-		return true;
+		return ships.every((ship) => ship.isSunk());
 	};
 
 	const getMissedShots = () => missedShots;
