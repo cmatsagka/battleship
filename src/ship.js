@@ -1,14 +1,16 @@
-export function ship(length, hits = null, sunk = false) {
-	hits = hit(hits);
-	sunk = isSunk(length, hits);
-	return { length, hits, sunk, hit, isSunk };
+export function ship(length) {
+	let hitsCount = 0;
+
+	return {
+		length: length,
+		hit() {
+			hitsCount++;
+		},
+		isSunk() {
+			return hitsCount >= length;
+		},
+		getHits() {
+			return hitsCount;
+		},
+	};
 }
-
-const hit = (hits) => {
-	return hits++;
-};
-
-const isSunk = (length, hits) => {
-	if (hits === length) return true;
-	return false;
-};

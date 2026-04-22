@@ -8,7 +8,13 @@ describe('ship factory', () => {
 
 	test('starts with 0 hits', () => {
 		const myShip = ship(3);
-		expect(myShip.hits).toBe(0);
+		expect(myShip.getHits()).toBe(0);
+	});
+
+	test('increases the number of hits when hit() is called', () => {
+		const myShip = ship(3);
+		myShip.hit();
+		expect(myShip.getHits()).toBe(1);
 	});
 
 	test('isSunk() returns true if hits equal length', () => {
