@@ -4,7 +4,7 @@ export function ship(length, hits = null, sunk = false) {
 	return { length, hits, sunk };
 }
 
-const hit = (hits) => {
+export const hit = (hits) => {
 	return hits++;
 };
 
