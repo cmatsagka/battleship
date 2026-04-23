@@ -16,6 +16,8 @@ export function gameBoard() {
 	}
 
 	const placeShip = (ship, x, y, orientation) => {
+		if (outOfBoard(ship.length, x, y)) return 'out of board';
+
 		for (let i = 0; i < ship.length; i++) {
 			if (orientation === 'horizontal') {
 				board[x + i][y] = ship;
@@ -23,6 +25,10 @@ export function gameBoard() {
 				board[x][y + i] = ship;
 			}
 		}
+	};
+
+	const outOfBoard = (len, x, y) => {
+		if (len + x > 10 || len + y > 10) return true;
 	};
 
 	const receiveAttack = (x, y) => {

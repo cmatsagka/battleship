@@ -26,6 +26,14 @@ describe('gameBoard factory', () => {
 			expect(board.getSquare(0, 3)).toBe(battleship);
 			expect(board.getSquare(0, 5)).toBe(null);
 		});
+
+		test('places a ship out of board', () => {
+			const board = gameBoard();
+			const battleship = board.ships[3];
+
+			const result = board.placeShip(battleship, 0, 8, 'vertical');
+			expect(result).toBe('out of board');
+		});
 	});
 
 	describe('receiveAttack', () => {
