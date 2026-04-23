@@ -11,4 +11,12 @@ describe('player factory', () => {
 		expect(p2.board).toBeDefined();
 		expect(p2.playerName).toBe('Computer');
 	});
+
+	test('player can attack enemy board', () => {
+		const p1 = player('Player 1');
+		const p2 = player('Computer');
+
+		p1.attack(p2.board, 5, 5);
+		expect(p2.board.getMissedShots()).toContainEqual([5, 5]);
+	});
 });

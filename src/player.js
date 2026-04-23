@@ -4,5 +4,9 @@ export function player(name) {
 	const board = gameBoard();
 	const playerName = name;
 
-	return { board, playerName };
+	const attack = (enemyBoard, x, y) => {
+		enemyBoard.receiveAttack(x, y);
+	};
+
+	return { board, playerName, attack };
 }
