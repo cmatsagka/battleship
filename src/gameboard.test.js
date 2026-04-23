@@ -27,12 +27,23 @@ describe('gameBoard factory', () => {
 			expect(board.getSquare(0, 5)).toBe(null);
 		});
 
-		test('places a ship out of board', () => {
+		test(`can't place a ship out of board`, () => {
 			const board = gameBoard();
 			const battleship = board.ships[3];
 
 			const result = board.placeShip(battleship, 0, 8, 'vertical');
 			expect(result).toBe('out of board');
+		});
+
+		test(`can't place a ship that overlaps with another`, () => {
+			const board = gameBoard();
+			const battleship = board.ships[3];
+			const sub = board.ships[0];
+
+			board.placeShip(battleship, 0, 0, 'vertical');
+			const result = board.placeShip(sub, 0, 0, 'horizontal');
+
+			expect(result).toBe('ships overlap');
 		});
 	});
 
