@@ -5,11 +5,11 @@ describe('player factory', () => {
 	test('each player has their own gameboard and name', () => {
 		const p1 = player('Player 1');
 		expect(p1.board).toBeDefined();
-		expect(p1.playerName).toBe('Player 1');
+		expect(p1.name).toBe('Player 1');
 
 		const p2 = player('Computer');
 		expect(p2.board).toBeDefined();
-		expect(p2.playerName).toBe('Computer');
+		expect(p2.name).toBe('Computer');
 	});
 
 	test('player can attack enemy board', () => {
