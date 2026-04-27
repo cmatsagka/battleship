@@ -43,10 +43,15 @@ export function gameBoard() {
 	const receiveAttack = (x, y) => {
 		const target = board[x][y];
 
+		if (target === 'miss' || target === 'hit') return 'already attacked';
+
 		if (target !== null) {
 			target.hit();
+			board[x][y] = 'hit';
+			hitCount++;
 			return true;
 		} else {
+			board[x][y] = 'miss';
 			missedShots.push([x, y]);
 			return false;
 		}
