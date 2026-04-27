@@ -29,11 +29,18 @@ describe('player factory', () => {
 
 	test('computer can make a random attack', () => {
 		const p1 = player('Player 1');
-		const computer = player('Computer');
+		p1.board.placeShip(p1.board.ships[0], 0, 0, 'horizontal');
+		p1.board.placeShip(p1.board.ships[1], 0, 1, 'horizontal');
+		p1.board.placeShip(p1.board.ships[2], 0, 2, 'horizontal');
+		p1.board.placeShip(p1.board.ships[3], 0, 3, 'horizontal');
+		p1.board.placeShip(p1.board.ships[4], 0, 4, 'horizontal');
 
-		computer.randomAttack(p1.board);
+		const computer = player('Computer', 'computer');
 
-		const totalMoves = p1.board.getMissedShots().length;
-		expect(totalMoves).toBe(1);
+		for (let i = 0; i < 100; i++) {
+			computer.randomAttack(p1.board);
+		}
+
+		expect(p1.board.allSunk()).toBe(true);
 	});
 });

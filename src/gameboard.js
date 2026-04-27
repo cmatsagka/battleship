@@ -48,7 +48,6 @@ export function gameBoard() {
 		if (target !== null) {
 			target.hit();
 			board[x][y] = 'hit';
-			hitCount++;
 			return true;
 		} else {
 			board[x][y] = 'miss';
