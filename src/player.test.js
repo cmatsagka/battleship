@@ -29,11 +29,21 @@ describe('player factory', () => {
 
 	test('computer can make a random attack', () => {
 		const p1 = player('Player 1');
-		p1.board.placeShip(p1.board.ships[0], 0, 0, 'horizontal');
-		p1.board.placeShip(p1.board.ships[1], 0, 1, 'horizontal');
-		p1.board.placeShip(p1.board.ships[2], 0, 2, 'horizontal');
-		p1.board.placeShip(p1.board.ships[3], 0, 3, 'horizontal');
-		p1.board.placeShip(p1.board.ships[4], 0, 4, 'horizontal');
+		expect(p1.board.placeShip(p1.board.ships[0], 0, 0, 'horizontal')).toBe(
+			true
+		);
+		expect(p1.board.placeShip(p1.board.ships[1], 0, 1, 'horizontal')).toBe(
+			true
+		);
+		expect(p1.board.placeShip(p1.board.ships[2], 0, 2, 'horizontal')).toBe(
+			true
+		);
+		expect(p1.board.placeShip(p1.board.ships[3], 0, 3, 'horizontal')).toBe(
+			true
+		);
+		expect(p1.board.placeShip(p1.board.ships[4], 0, 4, 'horizontal')).toBe(
+			true
+		);
 
 		const computer = player('Computer', 'computer');
 
