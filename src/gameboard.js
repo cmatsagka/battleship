@@ -15,21 +15,26 @@ export function gameBoard() {
 		ships.push(ship(shipsSizes[i]));
 	}
 
-	const placeShip = (ship, x, y, orientation) => {
+	const isValidPlacement = (ship, x, y, orientation) => {
 		if (orientation === 'horizontal') {
-			if (ship.length + x > 10 || y > 9) return 'out of board';
+			if (ship.length + x > 10 || y > 9) return false;
 		} else {
-			if (ship.length + y > 10 || x > 9) return 'out of board';
+			if (ship.length + y > 10 || x > 9) return false;
 		}
 
 		for (let i = 0; i < ship.length; i++) {
 			if (orientation === 'horizontal' && board[x + i][y] !== null) {
-				return 'ships overlap';
+				return false;
 			}
 			if (orientation === 'vertical' && board[x][y + i] !== null) {
-				return 'ships overlap';
+				return false;
 			}
 		}
+		return true;
+	};
+
+	const placeShip = (ship, x, y, orientation) => {
+		if (!isValidPlacement(ship, x, y, orientation)) return false;
 
 		for (let i = 0; i < ship.length; i++) {
 			if (orientation === 'horizontal') {
@@ -38,6 +43,8 @@ export function gameBoard() {
 				board[x][y + i] = ship;
 			}
 		}
+
+		return true;
 	};
 
 	const receiveAttack = (x, y) => {
@@ -64,6 +71,7 @@ export function gameBoard() {
 
 	return {
 		ships,
+		isValidPlacement,
 		placeShip,
 		getSquare,
 		receiveAttack,

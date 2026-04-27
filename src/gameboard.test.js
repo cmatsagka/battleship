@@ -27,23 +27,41 @@ describe('gameBoard factory', () => {
 			expect(board.getSquare(0, 5)).toBe(null);
 		});
 
-		test(`can't place a ship out of board`, () => {
+		test('isValidPlacement returns true for valid horizontal placement', () => {
 			const board = gameBoard();
-			const battleship = board.ships[3];
-
-			const result = board.placeShip(battleship, 0, 8, 'vertical');
-			expect(result).toBe('out of board');
+			const sub = board.ships[0];
+			expect(board.isValidPlacement(sub, 0, 0, 'horizontal')).toBe(true);
 		});
 
-		test(`can't place a ship that overlaps with another`, () => {
+		test('isValidPlacement returns false for out of bounds', () => {
 			const board = gameBoard();
-			const battleship = board.ships[3];
+			const carrier = board.ships[4];
+			expect(board.isValidPlacement(carrier, 7, 0, 'horizontal')).toBe(
+				false
+			);
+		});
+
+		test('isValidPlacement returns false for overlapping ships', () => {
+			const board = gameBoard();
 			const sub = board.ships[0];
+			const destroyer = board.ships[1];
 
-			board.placeShip(battleship, 0, 0, 'vertical');
-			const result = board.placeShip(sub, 0, 0, 'horizontal');
+			board.placeShip(sub, 0, 0, 'horizontal');
+			expect(board.isValidPlacement(destroyer, 0, 0, 'vertical')).toBe(
+				false
+			);
+		});
 
-			expect(result).toBe('ships overlap');
+		test('placeShip returns true on success', () => {
+			const board = gameBoard();
+			const sub = board.ships[0];
+			expect(board.placeShip(sub, 0, 0, 'horizontal')).toBe(true);
+		});
+
+		test('placeShip returns false on failure', () => {
+			const board = gameBoard();
+			const carrier = board.ships[4];
+			expect(board.placeShip(carrier, 8, 0, 'horizontal')).toBe(false);
 		});
 	});
 
