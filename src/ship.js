@@ -2,7 +2,7 @@ export function ship(length) {
 	let hitsCount = 0;
 
 	return {
-		length: length,
+		length,
 		hit() {
 			hitsCount++;
 		},
