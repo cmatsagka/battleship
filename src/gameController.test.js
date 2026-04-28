@@ -12,4 +12,11 @@ describe('Game Controller is able to: ', () => {
 		game.switchTurn();
 		expect(game.getActivePlayer().name).toBe('Human');
 	});
+
+	test('playRound correctly records a miss on the enemy board', () => {
+		const game = gameController();
+		game.playRound(5, 5);
+
+		expect(game.comp.board.getMissedShots()).toContainEqual([5, 5]);
+	});
 });
