@@ -4,6 +4,7 @@ export function gameController() {
 	const p1 = player('Human');
 	const comp = player('Computer', 'computer');
 	let activePlayer = p1;
+	let gameOver = false;
 
 	const getActivePlayer = () => activePlayer;
 
@@ -13,14 +14,26 @@ export function gameController() {
 		activePlayer = getEnemy();
 	};
 
-	const playRound = (x, y) => {
-		const enemy = getEnemy();
-		const result = activePlayer.attack(enemy.board, x, y);
-
-		if (result !== 'already attacked') {
-			switchTurn();
+	const checkWin = () => {
+		if (p1.board.allSunk() || comp.board.allSunk()) {
+			gameOver = true;
+			return true;
 		}
-		return result;
+		return false;
+	};
+
+	const playRound = (x, y) => {
+		if (gameOver) return 'Game is already over!';
+		const enemy = comp;
+
+		const result = p1.attack(enemy.board, x, y);
+		if (result === 'already attacked') return result;
+		if (checkWin()) return 'Human Wins!';
+
+		const compResult = comp.randomAttack(p1.board);
+		if (checkWin()) return 'Computer Wins!';
+
+		return { humanResult: result, compResult: compResult.result };
 	};
 
 	return {
@@ -30,5 +43,6 @@ export function gameController() {
 		switchTurn,
 		p1,
 		comp,
+		isGameOver: () => gameOver,
 	};
 }
