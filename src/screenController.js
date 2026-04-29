@@ -38,6 +38,15 @@ export function screenController() {
 	};
 
 	const game = gameController();
+
+	game.p1.board.placeShip(game.p1.board.ships[0], 0, 0, 'horizontal');
+	game.p1.board.placeShip(game.p1.board.ships[1], 4, 2, 'horizontal');
+	game.p1.board.placeShip(game.p1.board.ships[2], 4, 5, 'vertical');
+	game.p1.board.placeShip(game.p1.board.ships[3], 7, 5, 'vertical');
+	game.p1.board.placeShip(game.p1.board.ships[4], 2, 3, 'vertical');
+
+	game.placeComputerShips();
+
 	game.placeComputerShips();
 
 	const p1 = document.querySelector('#human-board');
