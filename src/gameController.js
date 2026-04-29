@@ -33,7 +33,7 @@ export function gameController() {
 		const compResult = comp.randomAttack(p1.board);
 		if (checkWin()) return 'Computer Wins!';
 
-		return { humanResult: result, compResult: compResult.result };
+		return { humanResult: result, compResult: compResult };
 	};
 
 	return {
