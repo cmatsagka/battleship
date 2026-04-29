@@ -2,6 +2,7 @@ import { ship } from './ship.js';
 
 export function gameBoard() {
 	const missedShots = [];
+	const hitShots = [];
 	const board = Array.from({ length: 10 }, () => Array(10).fill(null));
 
 	const getSquare = (x, y) => {
@@ -55,6 +56,7 @@ export function gameBoard() {
 		if (target !== null) {
 			target.hit();
 			board[x][y] = 'hit';
+			hitShots.push([x, y]);
 			return true;
 		} else {
 			board[x][y] = 'miss';
@@ -69,6 +71,8 @@ export function gameBoard() {
 
 	const getMissedShots = () => missedShots;
 
+	const getHitShots = () => hitShots;
+
 	return {
 		ships,
 		isValidPlacement,
@@ -76,6 +80,7 @@ export function gameBoard() {
 		getSquare,
 		receiveAttack,
 		getMissedShots,
+		getHitShots,
 		allSunk,
 	};
 }
