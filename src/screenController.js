@@ -45,4 +45,15 @@ export function screenController() {
 
 	createBoard(game.p1.board, p1, false);
 	createBoard(game.comp.board, comp, true);
+
+	comp.addEventListener('click', (e) => {
+		if (!e.target.classList.contains('square')) return;
+
+		const x = parseInt(e.target.dataset.x);
+		const y = parseInt(e.target.dataset.y);
+
+		game.playRound(x, y);
+		createBoard(game.p1.board, p1, false);
+		createBoard(game.comp.board, comp, true);
+	});
 }
