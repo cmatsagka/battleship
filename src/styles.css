@@ -7,3 +7,32 @@
 body {
 	min-height: 100vh;
 }
+
+.board {
+	display: grid;
+	grid-template-columns: repeat(10, 30px);
+	grid-template-rows: repeat(10, 30px);
+	gap: 1px;
+	margin-bottom: 20px;
+}
+
+.square {
+	width: 30px;
+	height: 30px;
+}
+
+.sea {
+	background-color: blue;
+}
+
+.ship {
+	background-color: grey;
+}
+
+.miss {
+	background-color: white;
+}
+
+.hit {
+	background-color: red;
+}
