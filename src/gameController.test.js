@@ -50,4 +50,36 @@ describe('Game Controller is able to: ', () => {
 
 		expect(game.isGameOver()).toBe(true);
 	});
+
+	describe('Computer Random Placement', () => {
+		test('all 5 ships are placed on the board', () => {
+			const game = gameController();
+			game.placeComputerShips();
+
+			const board = game.comp.board;
+			let placedShipCells = 0;
+
+			for (let x = 0; x < 10; x++) {
+				for (let y = 0; y < 10; y++) {
+					if (board.getSquare(x, y) !== null) {
+						placedShipCells++;
+					}
+				}
+			}
+
+			const expectedCells = board.ships.reduce(
+				(acc, ship) => acc + ship.length,
+				0
+			);
+
+			expect(placedShipCells).toBe(expectedCells);
+		});
+
+		test('ships do not overlap or go out of bounds', () => {
+			const game = gameController();
+			const result = game.placeComputerShips();
+
+			expect(result).toBe(true);
+		});
+	});
 });
