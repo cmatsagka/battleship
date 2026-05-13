@@ -63,7 +63,9 @@ export function screenController() {
 
 		const roundResult = game.playRound(x, y);
 
-		if (typeof roundResult === 'object') {
+		if (typeof roundResult === 'string') {
+			messageCenter.textContent = roundResult;
+		} else if (typeof roundResult === 'object') {
 			const humanHit = roundResult.humanResult
 				? 'You hit!'
 				: 'You missed!';
@@ -71,8 +73,6 @@ export function screenController() {
 				? 'Computer hit!'
 				: 'Computer missed!';
 			messageCenter.textContent = `${humanHit} ${compHit}`;
-		} else {
-			messageCenter.textContent = 'Battle in progress...';
 		}
 
 		createBoard(game.p1.board, p1, false);
