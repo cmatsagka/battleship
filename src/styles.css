@@ -8,6 +8,12 @@ body {
 	min-height: 100vh;
 }
 
+main {
+	display: flex;
+	justify-content: space-around;
+	padding: 20px;
+}
+
 .board {
 	display: grid;
 	grid-template-columns: repeat(10, 30px);
