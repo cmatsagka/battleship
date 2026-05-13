@@ -47,13 +47,13 @@ export function screenController() {
 
 	game.placeComputerShips();
 
-	game.placeComputerShips();
-
 	const p1 = document.querySelector('#human-board');
 	const comp = document.querySelector('#comp-board');
 
 	createBoard(game.p1.board, p1, false);
 	createBoard(game.comp.board, comp, true);
+
+	const messageCenter = document.querySelector('.message-center');
 
 	comp.addEventListener('click', (e) => {
 		if (!e.target.classList.contains('square')) return;
@@ -61,7 +61,20 @@ export function screenController() {
 		const x = parseInt(e.target.dataset.x);
 		const y = parseInt(e.target.dataset.y);
 
-		game.playRound(x, y);
+		const roundResult = game.playRound(x, y);
+
+		if (typeof roundResult === 'object') {
+			const humanHit = roundResult.humanResult
+				? 'You hit!'
+				: 'You missed!';
+			const compHit = roundResult.compResult.result
+				? 'Computer hit!'
+				: 'Computer missed!';
+			messageCenter.textContent = `${humanHit} ${compHit}`;
+		} else {
+			messageCenter.textContent = 'Battle in progress...';
+		}
+
 		createBoard(game.p1.board, p1, false);
 		createBoard(game.comp.board, comp, true);
 	});
