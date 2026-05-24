@@ -53,7 +53,8 @@ export function screenController() {
 	createBoard(game.p1.board, p1, false);
 	createBoard(game.comp.board, comp, true);
 
-	const messageCenter = document.querySelector('.message-center');
+	const humanMessage = document.querySelector('#human-message');
+	const compMessage = document.querySelector('#comp-message');
 
 	comp.addEventListener('click', (e) => {
 		if (!e.target.classList.contains('square')) return;
@@ -65,24 +66,30 @@ export function screenController() {
 		const roundResult = game.playRound(x, y);
 
 		if (typeof roundResult === 'string') {
-			messageCenter.textContent = roundResult;
+			humanMessage.textContent = roundResult;
+			compMessage.textContent = '';
 		} else if (typeof roundResult === 'object') {
 			const humanHit = roundResult.humanResult;
 			const compHit = roundResult.compResult.result;
 
-			let humanText = humanHit.hit
-				? `You hit their ${humanHit.shipName}!`
-				: 'You missed!';
-			if (humanHit.sunk)
-				humanText = `BOOM! You sank the computer's ${humanHit.shipName}!`;
+			if (humanHit.sunk) {
+				humanMessage.textContent = `BOOM! You sank the computer's ${humanHit.shipName}!`;
+			} else {
+				humanMessage.textContent = humanHit.hit
+					? `You hit their ${humanHit.shipName}!`
+					: 'You missed!';
+			}
 
 			let compText = compHit.hit
 				? `Computer hit your ${compHit.shipName}!`
 				: 'Computer missed.';
-			if (compHit.sunk)
-				compText = `MAYDAY! Computer sank your ${compHit.shipName}!`;
-
-			messageCenter.textContent = `${humanText} ${compText}`;
+			if (compHit.sunk) {
+				compMessage.textContent = `MAYDAY! Computer sank your ${compHit.shipName}!`;
+			} else {
+				compMessage.textContent = compHit.hit
+					? `Computer hit your ${compHit.shipName}!`
+					: 'Computer missed.';
+			}
 		}
 
 		createBoard(game.p1.board, p1, false);

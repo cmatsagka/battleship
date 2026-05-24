@@ -45,7 +45,7 @@ export function gameController() {
 		const enemy = comp;
 
 		const result = p1.attack(enemy.board, x, y);
-		if (result === 'already attacked') return result;
+		if (result === 'You already attacked here!') return result;
 		if (checkWin()) return 'Human Wins!';
 
 		const compResult = comp.randomAttack(p1.board);

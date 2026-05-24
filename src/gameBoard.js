@@ -58,7 +58,8 @@ export function gameBoard() {
 	const receiveAttack = (x, y) => {
 		const target = board[x][y];
 
-		if (target === 'miss' || target === 'hit') return 'already attacked';
+		if (target === 'miss' || target === 'hit')
+			return 'You already attacked here!';
 
 		if (target !== null) {
 			target.hit();
