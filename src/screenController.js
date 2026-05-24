@@ -57,6 +57,7 @@ export function screenController() {
 
 	comp.addEventListener('click', (e) => {
 		if (!e.target.classList.contains('square')) return;
+		if (game.isGameOver()) return;
 
 		const x = parseInt(e.target.dataset.x);
 		const y = parseInt(e.target.dataset.y);
