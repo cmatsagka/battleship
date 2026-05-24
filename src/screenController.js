@@ -1,8 +1,8 @@
-import { gameBoard } from './gameboard.js';
+import { gameBoard } from './gameBoard.js';
 import { gameController } from './gameController.js';
 
 export function screenController() {
-	const createBoard = (gameboard, parentElement, isHidden) => {
+	const createBoard = (gameBoard, parentElement, isHidden) => {
 		parentElement.textContent = '';
 
 		for (let x = 0; x < 10; x++) {
@@ -12,15 +12,15 @@ export function screenController() {
 				square.dataset.y = y;
 				square.classList.add('square');
 
-				const isMiss = gameboard
+				const isMiss = gameBoard
 					.getMissedShots()
 					.some((miss) => miss[0] === x && miss[1] === y);
 
-				const isHit = gameboard
+				const isHit = gameBoard
 					.getHitShots()
 					.some((hit) => hit[0] === x && hit[1] === y);
 
-				const shipFound = gameboard.getSquare(x, y);
+				const shipFound = gameBoard.getSquare(x, y);
 
 				if (isMiss) {
 					square.classList.add('miss');

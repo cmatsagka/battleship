@@ -1,4 +1,4 @@
-import { gameBoard } from './gameboard.js';
+import { gameBoard } from './gameBoard.js';
 
 export function player(name, type = 'human') {
 	const board = gameBoard();

@@ -1,4 +1,4 @@
-import { gameBoard } from './gameboard.js';
+import { gameBoard } from './gameBoard.js';
 
 describe('gameBoard factory', () => {
 	test('initializes with a fleet of 5 ships', () => {

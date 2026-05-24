@@ -1,4 +1,4 @@
-import { gameBoard } from './gameboard.js';
+import { gameBoard } from './gameBoard.js';
 import { player } from './player.js';
 import { gameController } from './gameController.js';
 

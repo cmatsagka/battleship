@@ -1,8 +1,8 @@
 import { player } from './player.js';
-import { gameBoard } from './gameboard.js';
+import { gameBoard } from './gameBoard.js';
 
 describe('player factory', () => {
-	test('each player has their own gameboard and name', () => {
+	test('each player has their own gameBoard and name', () => {
 		const p1 = player('Player 1');
 		expect(p1.board).toBeDefined();
 		expect(p1.name).toBe('Player 1');
