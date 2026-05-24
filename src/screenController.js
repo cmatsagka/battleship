@@ -67,13 +67,22 @@ export function screenController() {
 		if (typeof roundResult === 'string') {
 			messageCenter.textContent = roundResult;
 		} else if (typeof roundResult === 'object') {
-			const humanHit = roundResult.humanResult
-				? 'You hit!'
+			const humanHit = roundResult.humanResult;
+			const compHit = roundResult.compResult.result;
+
+			let humanText = humanHit.hit
+				? `You hit their ${humanHit.shipName}!`
 				: 'You missed!';
-			const compHit = roundResult.compResult.result
-				? 'Computer hit!'
-				: 'Computer missed!';
-			messageCenter.textContent = `${humanHit} ${compHit}`;
+			if (humanHit.sunk)
+				humanText = `BOOM! You sank the computer's ${humanHit.shipName}!`;
+
+			let compText = compHit.hit
+				? `Computer hit your ${compHit.shipName}!`
+				: 'Computer missed.';
+			if (compHit.sunk)
+				compText = `MAYDAY! Computer sank your ${compHit.shipName}!`;
+
+			messageCenter.textContent = `${humanText} ${compText}`;
 		}
 
 		createBoard(game.p1.board, p1, false);
