@@ -1,8 +1,9 @@
-export function ship(length) {
+export function ship(length, name = 'Unknown Ship') {
 	let hitsCount = 0;
 
 	return {
 		length,
+		name,
 		hit() {
 			hitsCount++;
 		},

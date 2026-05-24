@@ -10,10 +10,17 @@ export function gameBoard() {
 	};
 
 	const shipsSizes = [2, 3, 3, 4, 5];
+	const shipNames = [
+		'Patrol Boat',
+		'Submarine',
+		'Destroyer',
+		'Battleship',
+		'Carrier',
+	];
 	const ships = [];
 
 	for (let i = 0; i < 5; i++) {
-		ships.push(ship(shipsSizes[i]));
+		ships.push(ship(shipsSizes[i], shipNames[i]));
 	}
 
 	const isValidPlacement = (ship, x, y, orientation) => {
@@ -55,13 +62,18 @@ export function gameBoard() {
 
 		if (target !== null) {
 			target.hit();
+
+			const isSunk = target.isSunk();
+			const shipName = target.name;
+
 			board[x][y] = 'hit';
 			hitShots.push([x, y]);
-			return true;
+
+			return { hit: true, sunk: isSunk, shipName: shipName };
 		} else {
 			board[x][y] = 'miss';
 			missedShots.push([x, y]);
-			return false;
+			return { hit: false, sunk: false };
 		}
 	};
 
