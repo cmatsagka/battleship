@@ -1,7 +1,17 @@
+import { transform } from '@babel/core';
 import { gameBoard } from './gameBoard.js';
 import { gameController } from './gameController.js';
 
 export function screenController() {
+	const p1BoardDOM = document.querySelector('#human-board');
+	const compBoardDOM = document.querySelector('#comp-board');
+	const humanMessage = document.querySelector('#human-message');
+	const compMessage = document.querySelector('#comp-message');
+	const restartBtn = document.querySelector('#restart-btn');
+
+	let game;
+	let isComputerThinking;
+
 	const createBoard = (gameBoard, parentElement, isHidden) => {
 		parentElement.textContent = '';
 
@@ -29,27 +39,27 @@ export function screenController() {
 		}
 	};
 
-	const game = gameController();
+	const startNewGame = () => {
+		game = gameController();
+		isComputerThinking = false;
 
-	game.p1.board.placeShip(game.p1.board.ships[0], 0, 0, 'horizontal');
-	game.p1.board.placeShip(game.p1.board.ships[1], 4, 2, 'horizontal');
-	game.p1.board.placeShip(game.p1.board.ships[2], 4, 5, 'vertical');
-	game.p1.board.placeShip(game.p1.board.ships[3], 7, 5, 'vertical');
-	game.p1.board.placeShip(game.p1.board.ships[4], 2, 3, 'vertical');
+		humanMessage.textContent = 'New game started! Your turn!';
+		compMessage.textContent = '';
+		restartBtn.style.display = 'none';
 
-	game.placeComputerShips();
+		game.p1.board.placeShip(game.p1.board.ships[0], 0, 0, 'horizontal');
+		game.p1.board.placeShip(game.p1.board.ships[1], 4, 2, 'horizontal');
+		game.p1.board.placeShip(game.p1.board.ships[2], 4, 5, 'vertical');
+		game.p1.board.placeShip(game.p1.board.ships[3], 7, 5, 'vertical');
+		game.p1.board.placeShip(game.p1.board.ships[4], 2, 3, 'vertical');
 
-	const p1 = document.querySelector('#human-board');
-	const comp = document.querySelector('#comp-board');
+		game.placeComputerShips();
 
-	createBoard(game.p1.board, p1, false);
-	createBoard(game.comp.board, comp, true);
+		createBoard(game.p1.board, p1BoardDOM, false);
+		createBoard(game.comp.board, compBoardDOM, true);
+	};
 
-	const humanMessage = document.querySelector('#human-message');
-	const compMessage = document.querySelector('#comp-message');
-	let isComputerThinking = false;
-
-	comp.addEventListener('click', (e) => {
+	compBoardDOM.addEventListener('click', (e) => {
 		if (!e.target.classList.contains('square')) return;
 		if (game.isGameOver() || isComputerThinking) return;
 
@@ -75,12 +85,13 @@ export function screenController() {
 
 		compMessage.textContent = 'Computer is planning...';
 
-		createBoard(game.p1.board, p1, false);
-		createBoard(game.comp.board, comp, true);
+		createBoard(game.p1.board, p1BoardDOM, false);
+		createBoard(game.comp.board, compBoardDOM, true);
 
 		if (game.isGameOver()) {
 			humanMessage.textContent = 'Human Wins!';
 			compMessage.textContent = '';
+			restartBtn.style.display = 'block';
 			return;
 		}
 
@@ -105,12 +116,19 @@ export function screenController() {
 
 			if (game.isGameOver() && game.p1.board.allSunk()) {
 				compMessage.textContent = 'Computer wins!';
+				restartBtn.style.display = 'block';
 			}
 
-			createBoard(game.p1.board, p1, false);
-			createBoard(game.comp.board, comp, true);
+			createBoard(game.p1.board, p1BoardDOM, false);
+			createBoard(game.comp.board, compBoardDOM, true);
 
 			isComputerThinking = false;
 		}, 1000);
 	});
+
+	restartBtn.addEventListener('click', () => {
+		startNewGame();
+	});
+
+	startNewGame();
 }
