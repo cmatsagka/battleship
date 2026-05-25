@@ -44,7 +44,7 @@ export function screenController() {
 
 		humanMessage.textContent = 'New game started! Your turn!';
 		compMessage.textContent = '';
-		restartBtn.style.display = 'none';
+		restartBtn.classList.add('hidden');
 
 		game.p1.board.placeShip(game.p1.board.ships[0], 0, 0, 'horizontal');
 		game.p1.board.placeShip(game.p1.board.ships[1], 4, 2, 'horizontal');
@@ -69,6 +69,7 @@ export function screenController() {
 
 		if (typeof roundResult === 'string') {
 			humanMessage.textContent = roundResult;
+			if (game.isGameOver()) restartBtn.classList.remove('hidden');
 			return;
 		}
 
@@ -90,7 +91,7 @@ export function screenController() {
 		if (game.isGameOver()) {
 			humanMessage.textContent = 'Human Wins!';
 			compMessage.textContent = '';
-			restartBtn.style.display = 'block';
+			restartBtn.classList.remove('hidden');
 			return;
 		}
 
@@ -101,6 +102,8 @@ export function screenController() {
 
 			if (typeof compRoundResult === 'string') {
 				compMessage.textContent = compRoundResult;
+				if (game.isGameOver()) restartBtn.classList.remove('hidden');
+				return;
 			} else {
 				const compHit = compRoundResult.compResult.result;
 
@@ -111,11 +114,6 @@ export function screenController() {
 						? `Computer hit your ${compHit.shipName}!`
 						: 'Computer missed.';
 				}
-			}
-
-			if (game.isGameOver() && game.p1.board.allSunk()) {
-				compMessage.textContent = 'Computer wins!';
-				restartBtn.style.display = 'block';
 			}
 
 			createBoard(game.p1.board, p1BoardDOM, false);

@@ -31,7 +31,15 @@ header {
 }
 
 #restart-btn {
-	/* display: none; */
+	padding: 10px 20px;
+	background-color: #0055ff;
+	color: white;
+	border: none;
+	cursor: pointer;
+}
+
+.hidden {
+	display: none !important;
 }
 
 main {
