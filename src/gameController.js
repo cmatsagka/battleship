@@ -71,13 +71,22 @@ export function gameController() {
 		}
 
 		if (compResult.hit === true && compResult.sunk === false) {
-			if (x + 1 < 10) adjacentSlots.push([x + 1, y]);
+			const potentialTargets = [
+				[x + 1, y],
+				[x - 1, y],
+				[x, y + 1],
+				[x, y - 1],
+			];
 
-			if (x - 1 >= 0) adjacentSlots.push([x - 1, y]);
+			potentialTargets.forEach(([nx, ny]) => {
+				if (nx >= 0 && nx < 10 && (ny >= 0) & (ny < 10)) {
+					const targetState = p1.board.getSquare(nx, ny);
 
-			if (y + 1 < 10) adjacentSlots.push([x, y + 1]);
-
-			if (y - 1 >= 0) adjacentSlots.push([x, y - 1]);
+					if (targetState !== 'hit' && targetState !== 'miss') {
+						adjacentSlots.push([nx, ny]);
+					}
+				}
+			});
 		}
 
 		if (compResult.sunk === true) {
