@@ -12,21 +12,13 @@ export function screenController() {
 				square.dataset.y = y;
 				square.classList.add('square');
 
-				const isMiss = gameBoard
-					.getMissedShots()
-					.some((miss) => miss[0] === x && miss[1] === y);
+				const targetState = gameBoard.getSquare(x, y);
 
-				const isHit = gameBoard
-					.getHitShots()
-					.some((hit) => hit[0] === x && hit[1] === y);
-
-				const shipFound = gameBoard.getSquare(x, y);
-
-				if (isMiss) {
+				if (targetState === 'miss') {
 					square.classList.add('miss');
-				} else if (isHit) {
+				} else if (targetState === 'hit') {
 					square.classList.add('hit');
-				} else if (shipFound !== null && !isHidden) {
+				} else if (targetState !== null && !isHidden) {
 					square.classList.add('ship');
 				} else {
 					square.classList.add('sea');
