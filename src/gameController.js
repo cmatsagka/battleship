@@ -42,20 +42,24 @@ export function gameController() {
 
 	const playRound = (x, y) => {
 		if (gameOver) return 'Game is already over!';
-		const enemy = comp;
 
-		const result = p1.attack(enemy.board, x, y);
+		const result = p1.attack(comp.board, x, y);
 		if (result === 'You already attacked here!') return result;
 		if (checkWin()) return 'Human Wins!';
 
+		return { humanResult: result };
+	};
+
+	const playComputerTurn = () => {
+		if (gameOver) return 'Game is already over!';
 		const compResult = comp.randomAttack(p1.board);
 		if (checkWin()) return 'Computer Wins!';
-
-		return { humanResult: result, compResult: compResult };
+		return { compResult: compResult };
 	};
 
 	return {
 		playRound,
+		playComputerTurn,
 		getEnemy,
 		getActivePlayer,
 		switchTurn,
