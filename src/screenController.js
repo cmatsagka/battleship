@@ -105,7 +105,7 @@ export function screenController() {
 				if (game.isGameOver()) restartBtn.classList.remove('hidden');
 				return;
 			} else {
-				const compHit = compRoundResult.compResult.result;
+				const compHit = compRoundResult.compResult;
 
 				if (compHit.sunk) {
 					compMessage.textContent = `MAYDAY! Computer sank your ${compHit.shipName}!`;
