@@ -1,5 +1,6 @@
 import { gameBoard } from './gameBoard.js';
 import { gameController } from './gameController.js';
+import { player } from './player.js';
 
 export function screenController() {
 	const p1BoardDOM = document.querySelector('#human-board');
@@ -7,6 +8,37 @@ export function screenController() {
 	const humanMessage = document.querySelector('#human-message');
 	const compMessage = document.querySelector('#comp-message');
 	const restartBtn = document.querySelector('#restart-btn');
+	const randomP1Btn = document.querySelector('#random-p1-board');
+	const startMatchBtn = document.querySelector('#start-match-btn');
+
+	const randomizePlayerShips = (playerObject, boardDOM, isHidden) => {
+		playerObject.board.resetBoard();
+
+		playerObject.board.ships.forEach((ship) => {
+			let placed = false;
+			const x = Math.floor(Math.random() * 10);
+			const y = Math.floor(Math.random() * 10);
+			const orientation = Math.random() > 0.5 ? 'horizontal' : 'vertical';
+
+			if (playerObject.board.placeShip(ship, x, y, orientation)) {
+				placed = true;
+			}
+		});
+
+		createBoard(playerObject.board, boardDOM, isHidden);
+	};
+
+	randomBtn.addEventListener('click', () => {
+		randomizePlayerShips(game.p1, p1BoardDOM, false);
+		startMatchBtn.classList.remove('hidden');
+	});
+
+	startMatchBtn.addEventListener('click', () => {
+		randomP1btn.classList.add('hidden');
+		startMatchBtn.classList.add('hidden');
+
+		humanMessage.textContent = 'Fleet deployed! Your turn to attack!';
+	});
 
 	let game;
 	let isComputerThinking;
