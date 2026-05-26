@@ -79,7 +79,7 @@ export function gameController() {
 			];
 
 			potentialTargets.forEach(([nx, ny]) => {
-				if (nx >= 0 && nx < 10 && (ny >= 0) & (ny < 10)) {
+				if (nx >= 0 && nx < 10 && ny >= 0 && ny < 10) {
 					const targetState = p1.board.getSquare(nx, ny);
 
 					if (targetState !== 'hit' && targetState !== 'miss') {

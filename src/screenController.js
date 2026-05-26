@@ -13,6 +13,7 @@ export function screenController() {
 
 	let game;
 	let isComputerThinking;
+	let isGameStarted;
 
 	const randomizePlayerShips = (playerObject, boardDOM, isHidden) => {
 		playerObject.board.resetBoard();
@@ -43,6 +44,7 @@ export function screenController() {
 	startMatchBtn.addEventListener('click', () => {
 		randomP1Btn.classList.add('hidden');
 		startMatchBtn.classList.add('hidden');
+		isGameStarted = true;
 
 		humanMessage.textContent = 'Fleet deployed! Your turn to attack!';
 	});
@@ -76,6 +78,7 @@ export function screenController() {
 
 	const startNewGame = () => {
 		game = gameController();
+		isGameStarted = false;
 		isComputerThinking = false;
 
 		humanMessage.textContent = 'Deploy your fleet! Click Randomize Fleet.';
@@ -92,6 +95,7 @@ export function screenController() {
 	};
 
 	compBoardDOM.addEventListener('click', (e) => {
+		if (!isGameStarted) return;
 		if (!e.target.classList.contains('square')) return;
 		if (game.isGameOver() || isComputerThinking) return;
 
