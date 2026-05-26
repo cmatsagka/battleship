@@ -3,7 +3,18 @@ import { ship } from './ship.js';
 export function gameBoard() {
 	const missedShots = [];
 	const hitShots = [];
-	const board = Array.from({ length: 10 }, () => Array(10).fill(null));
+	let board = Array.from({ length: 10 }, () => Array(10).fill(null));
+
+	const resetBoard = () => {
+		board = Array.from({ length: 10 }, () => Array(10).fill(null));
+		missedShots.length = 0;
+		hitShots.length = 0;
+
+		ships.length = 0;
+		for (let i = 0; i < 5; i++) {
+			ships.push(ship(shipsSizes[i], shipNames[i]));
+		}
+	};
 
 	const getSquare = (x, y) => {
 		return board[x][y];
@@ -88,6 +99,7 @@ export function gameBoard() {
 
 	return {
 		ships,
+		resetBoard,
 		isValidPlacement,
 		placeShip,
 		getSquare,

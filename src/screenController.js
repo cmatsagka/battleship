@@ -8,40 +8,44 @@ export function screenController() {
 	const humanMessage = document.querySelector('#human-message');
 	const compMessage = document.querySelector('#comp-message');
 	const restartBtn = document.querySelector('#restart-btn');
-	const randomP1Btn = document.querySelector('#random-p1-board');
+	const randomP1Btn = document.querySelector('#random-p1-btn');
 	const startMatchBtn = document.querySelector('#start-match-btn');
+
+	let game;
+	let isComputerThinking;
 
 	const randomizePlayerShips = (playerObject, boardDOM, isHidden) => {
 		playerObject.board.resetBoard();
 
 		playerObject.board.ships.forEach((ship) => {
 			let placed = false;
-			const x = Math.floor(Math.random() * 10);
-			const y = Math.floor(Math.random() * 10);
-			const orientation = Math.random() > 0.5 ? 'horizontal' : 'vertical';
 
-			if (playerObject.board.placeShip(ship, x, y, orientation)) {
-				placed = true;
+			while (!placed) {
+				const x = Math.floor(Math.random() * 10);
+				const y = Math.floor(Math.random() * 10);
+				const orientation =
+					Math.random() > 0.5 ? 'horizontal' : 'vertical';
+
+				if (playerObject.board.placeShip(ship, x, y, orientation)) {
+					placed = true;
+				}
 			}
 		});
 
 		createBoard(playerObject.board, boardDOM, isHidden);
 	};
 
-	randomBtn.addEventListener('click', () => {
+	randomP1Btn.addEventListener('click', () => {
 		randomizePlayerShips(game.p1, p1BoardDOM, false);
 		startMatchBtn.classList.remove('hidden');
 	});
 
 	startMatchBtn.addEventListener('click', () => {
-		randomP1btn.classList.add('hidden');
+		randomP1Btn.classList.add('hidden');
 		startMatchBtn.classList.add('hidden');
 
 		humanMessage.textContent = 'Fleet deployed! Your turn to attack!';
 	});
-
-	let game;
-	let isComputerThinking;
 
 	const createBoard = (gameBoard, parentElement, isHidden) => {
 		parentElement.textContent = '';
@@ -74,15 +78,12 @@ export function screenController() {
 		game = gameController();
 		isComputerThinking = false;
 
-		humanMessage.textContent = 'New game started! Your turn!';
+		humanMessage.textContent = 'Deploy your fleet! Click Randomize Fleet.';
 		compMessage.textContent = '';
 		restartBtn.classList.add('hidden');
 
-		game.p1.board.placeShip(game.p1.board.ships[0], 0, 0, 'horizontal');
-		game.p1.board.placeShip(game.p1.board.ships[1], 4, 2, 'horizontal');
-		game.p1.board.placeShip(game.p1.board.ships[2], 4, 5, 'vertical');
-		game.p1.board.placeShip(game.p1.board.ships[3], 7, 5, 'vertical');
-		game.p1.board.placeShip(game.p1.board.ships[4], 2, 3, 'vertical');
+		randomP1Btn.classList.remove('hidden');
+		startMatchBtn.classList.add('hidden');
 
 		game.placeComputerShips();
 
