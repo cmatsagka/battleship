@@ -15,13 +15,23 @@
 			<button id="restart-btn" class="hidden">Play Again</button>
 		</header>
 		<main>
-			<div class="section player">
-				<h2>Player's board</h2>
-				<div id="human-board" class="board"></div>
+			<div class="setup-container">
+				<div class="setup-controls">
+					<button id="random-p1-btn">Randomize Fleet</button>
+					<button id="start-march-btn" class="hidden">
+						Commit Fleet & Start
+					</button>
+				</div>
 			</div>
-			<div class="section computer">
-				<h2>Computer's board</h2>
-				<div id="comp-board" class="board"></div>
+			<div class="boards-container">
+				<div class="section player">
+					<h2>Player's board</h2>
+					<div id="human-board" class="board"></div>
+				</div>
+				<div class="section computer">
+					<h2>Computer's board</h2>
+					<div id="comp-board" class="board"></div>
+				</div>
 			</div>
 		</main>
 		<footer class="site-footer">

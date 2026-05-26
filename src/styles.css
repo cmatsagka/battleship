@@ -47,8 +47,20 @@ header {
 
 main {
 	display: flex;
-	justify-content: space-around;
+	flex-direction: column;
 	padding: 20px;
+}
+
+.setup-container {
+	display: flex;
+	justify-content: center;
+	padding: 20px;
+}
+
+.boards-container {
+	display: flex;
+	padding: 20px;
+	justify-content: space-around;
 }
 
 .board {
