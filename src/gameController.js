@@ -5,8 +5,12 @@ export function gameController() {
 	const comp = player('Computer', 'computer');
 	let activePlayer = p1;
 	let gameOver = false;
-	let nextMove;
-	let adjacentSlots = [];
+	let aiState = {
+		mode: 'HUNT',
+		anchor: null,
+		targetQueue: [],
+		streakQueue: [],
+	};
 
 	const placeComputerShips = () => {
 		comp.board.ships.forEach((ship) => {
@@ -58,39 +62,94 @@ export function gameController() {
 		let compResult;
 		let x, y;
 
-		if (adjacentSlots.length > 0) {
-			const cords = adjacentSlots.pop();
-			x = cords[0];
-			y = cords[1];
-			compResult = comp.attack(p1.board, x, y);
+		if (aiState.mode === 'STREAK' && aiState.streakQueue.length > 0) {
+			[x, y] = aiState.streakQueue.shift();
+		} else if (
+			aiState.mode === 'TARGET' &&
+			aiState.targetQueue.length > 0
+		) {
+			[x, y] = aiState.targetQueue.pop();
 		} else {
+			aiState.mode = 'HUNT';
 			const attackData = comp.randomAttack(p1.board);
 			x = attackData.x;
 			y = attackData.y;
 			compResult = attackData.result;
 		}
 
-		if (compResult.hit === true && compResult.sunk === false) {
-			const potentialTargets = [
-				[x + 1, y],
-				[x - 1, y],
-				[x, y + 1],
-				[x, y - 1],
-			];
-
-			potentialTargets.forEach(([nx, ny]) => {
-				if (nx >= 0 && nx < 10 && ny >= 0 && ny < 10) {
-					const targetState = p1.board.getSquare(nx, ny);
-
-					if (targetState !== 'hit' && targetState !== 'miss') {
-						adjacentSlots.push([nx, ny]);
-					}
-				}
-			});
+		if (aiState.mode !== 'HUNT') {
+			compResult = comp.attack(p1.board, x, y);
 		}
 
 		if (compResult.sunk === true) {
-			adjacentSlots = [];
+			aiState = {
+				mode: 'HUNT',
+				anchor: null,
+				targetQueue: [],
+				streakQueue: [],
+			};
+		} else if (compResult.hit === true) {
+			if (aiState.mode === 'HUNT') {
+				aiState.mode = 'TARGET';
+				aiState.anchor = [x, y];
+
+				const potentialTargets = [
+					[x + 1, y],
+					[x - 1, y],
+					[x, y + 1],
+					[x, y - 1],
+				];
+
+				potentialTargets.forEach(([nx, ny]) => {
+					if (nx >= 0 && nx < 10 && ny >= 0 && ny < 10) {
+						const targetState = p1.board.getSquare(nx, ny);
+
+						if (targetState !== 'hit' && targetState !== 'miss') {
+							aiState.targetQueue.push([nx, ny]);
+						}
+					}
+				});
+			} else if (aiState.mode === 'TARGET') {
+				aiState.mode = 'STREAK';
+				aiState.targetQueue = [];
+
+				const dx = x - aiState.anchor[0];
+				const dy = y - aiState.anchor[1];
+
+				let fx = x + dx;
+				let fy = y + dy;
+
+				while (
+					fx >= 0 &&
+					fx < 10 &&
+					fy >= 0 &&
+					fy < 10 &&
+					p1.board.getSquare(fx, fy) !== 'miss'
+				) {
+					if (p1.board.getSquare(fx, fy) !== 'hit') {
+						aiState.streakQueue.push([fx, fy]);
+					}
+					fx += dx;
+					fy += dy;
+				}
+
+				let bx = aiState.anchor[0] - dx;
+				let by = aiState.anchor[1] - dy;
+
+				while (
+					bx >= 0 &&
+					bx < 10 &&
+					by >= 0 &&
+					by < 10 &&
+					p1.board.getSquare(bx, by) !== 'miss'
+				) {
+					if (p1.board.getSquare(bx, by) !== 'hit') {
+						aiState.streakQueue.push([bx, by]);
+					}
+					bx -= dx;
+					by -= dy;
+				}
+			}
 		}
 
 		if (checkWin()) return 'Computer Wins!';
