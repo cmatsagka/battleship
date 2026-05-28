@@ -77,17 +77,22 @@ export function gameController() {
 			compResult = attackData.result;
 		}
 
-		if (aiState.mode !== 'HUNT') {
+		if (aiState.mode !== 'HUNT' && x !== undefined && y !== undefined) {
 			compResult = comp.attack(p1.board, x, y);
 		}
 
 		if (compResult.sunk === true) {
-			aiState = {
-				mode: 'HUNT',
-				anchor: null,
-				targetQueue: [],
-				streakQueue: [],
-			};
+			if (aiState.targetQueue.length > 0) {
+				aiState.mode = 'TARGET';
+				aiState.streakQueue = [];
+			} else {
+				aiState = {
+					mode: 'HUNT',
+					anchor: null,
+					targetQueue: [],
+					streakQueue: [],
+				};
+			}
 		} else if (compResult.hit === true) {
 			if (aiState.mode === 'HUNT') {
 				aiState.mode = 'TARGET';
