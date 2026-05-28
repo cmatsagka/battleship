@@ -75,7 +75,7 @@ export function screenController() {
 			for (let y = 0; y < 10; y++) {
 				const currentSquare = game.p1.board.getSquare(x, y);
 
-				if (currentSquare && currentSquare.name === shipName) {
+				if (currentSquare && currentSquare.name === ship.name) {
 					isShipPlacedOnBoard = true;
 					break;
 				}
