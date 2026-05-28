@@ -63,6 +63,32 @@ main {
 	padding: 20px;
 }
 
+#ship-dock {
+	display: flex;
+	flex-direction: column;
+	gap: 15px;
+	margin-bottom: 20px;
+}
+
+.dock-ship {
+	display: flex;
+	flex-direction: row;
+	cursor: grab;
+	user-select: none;
+	width: max-content;
+}
+
+.dock-ship:active {
+	cursor: grabbing;
+}
+
+.ship-segment {
+	width: 30px;
+	height: 30px;
+	background-color: #7f8c8d;
+	border: 1px solid #2c3e50;
+}
+
 .boards-container {
 	display: flex;
 	padding: 20px;
