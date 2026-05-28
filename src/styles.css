@@ -89,6 +89,16 @@ main {
 	border: 1px solid #2c3e50;
 }
 
+.hover-valid {
+	background-color: rgba(46, 204, 113, 0.6) !important;
+	cursor: pointer;
+}
+
+.hover-invalid {
+	background-color: rgba(231, 76, 60, 0.6) !important;
+	cursor: no-drop;
+}
+
 .boards-container {
 	display: flex;
 	padding: 20px;

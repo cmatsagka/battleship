@@ -84,6 +84,122 @@ export function screenController() {
 		});
 	};
 
+	const setupDragAndBoard = () => {
+		let draggedShipElement = null;
+
+		const dockShips = document.querySelectorAll('.dock-ship');
+		dockShips.forEach((shipEl) => {
+			shipEl.addEventListener('dragstart', (e) => {
+				if (isGameStarted) {
+					e.preventDefault();
+					return;
+				}
+				draggedShipElement = shipEl;
+				e.dataTransfer.setData('text/plain', shipEl.dataset.name);
+			});
+		});
+
+		const getOccupiedSquares = (startX, startY, length, orientation) => {
+			const squares = [];
+			for (let i = 0; i < length; i++) {
+				const targetX =
+					orientation === 'horizontal' ? startX + 1 : startX;
+				const targetY =
+					orientation === 'vertical' ? startY + 1 : startY;
+				squares.push({ x: targetX, y: targetY });
+			}
+			return squares;
+		};
+
+		const clearHoverEffects = () => {
+			const allSquares = p1BoardDOM.querySelectorAll('.square');
+			allSquares.forEach((sq) => {
+				sq.classList.remove('hover-valid', 'hover-invalid');
+			});
+		};
+
+		p1BoardDOM.addEventListener('dragover', (e) => {
+			e.preventDefault();
+		});
+
+		p1BoardDOM.addEventListener('dragenter', (e) => {
+			if (!draggedShipElement || isGameStarted) return;
+			if (!e.target.classList.contains('square')) return;
+
+			clearHoverEffects();
+
+			const startX = parseInt(e.target.dataset.x);
+			const startY = parseInt(e.target.dataset.y);
+			const length = parseInt(draggedShipElement.dataset.length);
+			const name = draggedShipElement.dataset.name;
+
+			const shipObject = game.p1.board.ships.find((s) => s.name === name);
+			const isValid = game.p1.board.isValidPlacement(
+				shipObject,
+				startX,
+				startY,
+				currentOrientation
+			);
+
+			const coordinates = getOccupiedSquares(
+				startX,
+				startY,
+				currentOrientation
+			);
+
+			coordinates.forEach((coord) => {
+				const targetSquare = p1BoardDOM.querySelector(
+					`[data-x="${coord.x}"][data-y="${coord.y}"]`
+				);
+				if (targetSquare) {
+					targetSquare.classList.add(
+						isValid ? 'hover-valid' : 'hover-invalid'
+					);
+				}
+			});
+		});
+
+		p1BoardDOM.addEventListener('dragleave', (e) => {
+			if (e.relatedTarget && !p1BoardDOM.contains(e.relatedTarget)) {
+				clearHoverEffects();
+			}
+		});
+
+		p1BoardDOM.addEventListener('drop', (e) => {
+			if (!draggedShipElement || isGameStarted) return;
+			e.preventDefault();
+			clearHoverEffects();
+
+			const target = e.target.closest('.square');
+			if (!target) return;
+
+			const startX = parseInt(target.data.x);
+			const startY = parseInt(target.dataset.y);
+			const name = draggedShipElement.dataset.name;
+
+			const shipObject = game.p1.board.ships.find((s) => s.name === name);
+			const placementSuccessful = game.p1.board.placeShip(
+				shipObject,
+				startX,
+				startY,
+				currentOrientation
+			);
+
+			if (placementSuccessful) {
+				draggedShipElement.remove();
+				createBoard(game.p1.board, p1BoardDOM, false);
+
+				if (shipDockDOM.children.length === 0) {
+					startMatchBtn.classList.remove('hidden');
+					randomP1Btn.classList.add('hidden');
+					humanMessage.textContent =
+						'All ships deployed! Click Commit Fleet to start your battle!';
+				}
+			}
+			draggedShipElement = null;
+		});
+	};
+
 	const createBoard = (gameBoard, parentElement, isHidden) => {
 		parentElement.textContent = '';
 
@@ -115,8 +231,10 @@ export function screenController() {
 		game = gameController();
 		isGameStarted = false;
 		isComputerThinking = false;
+		currentOrientation = 'horizontal';
 
-		humanMessage.textContent = 'Deploy your fleet! Click Randomize Fleet.';
+		humanMessage.textContent =
+			'Deploy your fleet! Drag ships to your board or click to Randomize.';
 		compMessage.textContent = '';
 		restartBtn.classList.add('hidden');
 
@@ -124,9 +242,12 @@ export function screenController() {
 		startMatchBtn.classList.add('hidden');
 
 		game.placeComputerShips();
+		renderShipDock();
 
 		createBoard(game.p1.board, p1BoardDOM, false);
 		createBoard(game.comp.board, compBoardDOM, true);
+
+		setupDragAndBoard();
 	};
 
 	compBoardDOM.addEventListener('click', (e) => {
