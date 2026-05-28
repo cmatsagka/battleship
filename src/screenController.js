@@ -122,28 +122,7 @@ export function screenController() {
 					},
 				};
 
-				game.p1.board.ships.forEach((s) => {
-					if (s.name === shipName) {
-						for (let x = 0; x < 10; x++) {
-							for (let y = 0; y < 10; y++) {
-								const currentSquareContent =
-									game.p1.board.getSquare(x, y);
-								if (
-									currentSquareContent &&
-									currentSquareContent.name === shipName
-								) {
-									if (game.p1.board.board) {
-										game.p1.board.board[(x, y)] = null;
-									}
-								} else {
-									try {
-										game.p1.board.board[x][y] = null;
-									} catch (e) {}
-								}
-							}
-						}
-					}
-				});
+				game.p1.board.removeShipFromDataMatrix(shipName);
 
 				createBoard(game.p1.board, p1BoardDOM, false);
 				setupDragAndBoard();

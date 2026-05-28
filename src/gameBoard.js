@@ -97,6 +97,16 @@ export function gameBoard() {
 
 	const getHitShots = () => hitShots;
 
+	const removeShipFromDataMatrix = (shipName) => {
+		for (let x = 0; x < 10; x++) {
+			for (let y = 0; y < 10; y++) {
+				if (board[x][y] && board[x][y].name === shipName) {
+					board[x][y] = null;
+				}
+			}
+		}
+	};
+
 	return {
 		ships,
 		resetBoard,
@@ -107,5 +117,6 @@ export function gameBoard() {
 		getMissedShots,
 		getHitShots,
 		allSunk,
+		removeShipFromDataMatrix,
 	};
 }
