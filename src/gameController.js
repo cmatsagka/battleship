@@ -121,38 +121,34 @@ export function gameController() {
 				const dx = x - aiState.anchor[0];
 				const dy = y - aiState.anchor[1];
 
-				let fx = x + dx;
-				let fy = y + dy;
+				let i = 1;
 
-				while (
-					fx >= 0 &&
-					fx < 10 &&
-					fy >= 0 &&
-					fy < 10 &&
-					p1.board.getSquare(fx, fy) !== 'miss'
-				) {
-					if (p1.board.getSquare(fx, fy) !== 'hit') {
-						aiState.streakQueue.push([fx, fy]);
+				while (true) {
+					let fx = x + dx * i;
+					let fy = y + dy * i;
+					if (fx >= 0 && fx < 10 && fy >= 0 && fy < 10) {
+						const state = p1.board.getSquare(fx, fy);
+						if (state === 'miss') break;
+						if (state !== 'hit') aiState.streakQueue.push([fx, fy]);
+					} else {
+						break;
 					}
-					fx += dx;
-					fy += dy;
+					i++;
 				}
 
-				let bx = aiState.anchor[0] - dx;
-				let by = aiState.anchor[1] - dy;
+				let j = 1;
+				while (true) {
+					let bx = aiState.anchor[0] - dx * j;
+					let by = aiState.anchor[1] - dy * j;
 
-				while (
-					bx >= 0 &&
-					bx < 10 &&
-					by >= 0 &&
-					by < 10 &&
-					p1.board.getSquare(bx, by) !== 'miss'
-				) {
-					if (p1.board.getSquare(bx, by) !== 'hit') {
-						aiState.streakQueue.push([bx, by]);
+					if (bx >= 0 && bx < 10 && by >= 0 && by < 10) {
+						const state = p1.board.getSquare(bx, by);
+						if (state === 'miss') break;
+						if (state !== 'hit') aiState.streakQueue.push([bx, by]);
+					} else {
+						break;
 					}
-					bx -= dx;
-					by -= dy;
+					j++;
 				}
 			}
 		}
