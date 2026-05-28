@@ -1,6 +1,7 @@
 import { gameBoard } from './gameBoard.js';
 import { gameController } from './gameController.js';
 import { player } from './player.js';
+import { ship } from './ship.js';
 
 export function screenController() {
 	const p1BoardDOM = document.querySelector('#human-board');
@@ -68,6 +69,21 @@ export function screenController() {
 	const renderShipDock = () => {
 		shipDockDOM.textContent = '';
 
+		let isShipPlacedOnBoard = false;
+
+		for (let x = 0; x < 10; x++) {
+			for (let y = 0; y < 10; y++) {
+				const currentSquare = game.p1.board.getSquare(x, y);
+
+				if (currentSquare && currentSquare.name === shipName) {
+					isShipPlacedOnBoard = true;
+					break;
+				}
+			}
+			if (isShipPlacedOnBoard) break;
+		}
+		if (isShipPlacedOnBoard) return;
+
 		game.p1.board.ships.forEach((ship) => {
 			const shipContainer = document.createElement('div');
 			shipContainer.classList.add('dock-ship');
@@ -115,16 +131,56 @@ export function screenController() {
 					(s) => s.name === shipName
 				);
 
+				const originalX = parseInt(shipSquare.dataset.x);
+				const originalY = parseInt(shipSquare.dataset.y);
+
+				let originalOrientation = 'horizontal';
+
+				const checkBelow =
+					originalX + 1 < 10
+						? game.p1.board.getSquare(originalX + 1, originalY)
+						: null;
+				const checkAbove =
+					originalY - 1 >= 0
+						? game.p1.board.getSquare(originalX - 1, originalY)
+						: null;
+
+				if (
+					(checkBelow && checkBelow.name === shipName) ||
+					checkAbove & (checkAbove.name === shipName)
+				) {
+					originalOrientation = 'vertical';
+				}
+
 				draggedShipElement = {
 					dataset: {
 						name: shipName,
 						length: shipObject.length,
+						origX: originalX,
+						origY: originalY,
+						origOrientation: originalOrientation,
 					},
 				};
 
 				game.p1.board.removeShipFromDataMatrix(shipName);
 
 				createBoard(game.p1.board, p1BoardDOM, false);
+				setupDragAndBoard();
+			});
+
+			shipSquare.addEventListener('click', () => {
+				if (isGameStarted) return;
+
+				const shipName = shipSquare.dataset.shipName;
+				game.p1.board.removeShipFromDataMatrix(shipName);
+
+				startMatchBtn.classList.add('hidden');
+				randomP1Btn.classList.remove('hidden');
+				humanMessage.textContent =
+					'Deploy your fleet! Drag ships to your board or click to Randomize.';
+
+				createBoard(game.p1.board, p1BoardDOM, false);
+				renderShipDock();
 				setupDragAndBoard();
 			});
 		});
@@ -233,9 +289,20 @@ export function screenController() {
 				}
 			} else {
 				if (pickedUpShipName !== null) {
-					randomizePlayerShips(game.p1, p1BoardDOM, false);
-					shipDockDOM.textContent = '';
+					const origX = draggedShipElement.dataset.origX;
+					const origY = draggedShipElement.dataset.origY;
+					const origOrient = draggedShipElement.dataset.origOrient;
+
+					game.p1.board.placeShip(
+						shipObject,
+						origX,
+						origY,
+						origOrient
+					);
+					humanMessage.textContent =
+						'Invalid placement! Ship returned to its original position.';
 				}
+				createBoard(game.p1.board, p1BoardDOM, false);
 			}
 			draggedShipElement = null;
 			pickedUpShipName = null;
