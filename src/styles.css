@@ -57,6 +57,12 @@ main {
 	padding: 20px;
 }
 
+#fleet-container {
+	display: flex;
+	justify-content: center;
+	padding: 20px;
+}
+
 .boards-container {
 	display: flex;
 	padding: 20px;
