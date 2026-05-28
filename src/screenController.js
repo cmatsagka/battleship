@@ -10,10 +10,13 @@ export function screenController() {
 	const restartBtn = document.querySelector('#restart-btn');
 	const randomP1Btn = document.querySelector('#random-p1-btn');
 	const startMatchBtn = document.querySelector('#start-match-btn');
+	const shipDockDOM = document.querySelector('#ship-dock');
+	const rotateBtn = document.querySelector('#rotate-btn');
 
 	let game;
 	let isComputerThinking;
 	let isGameStarted;
+	let currentOrientation = 'horizontal';
 
 	const randomizePlayerShips = (playerObject, boardDOM, isHidden) => {
 		playerObject.board.resetBoard();
@@ -48,6 +51,38 @@ export function screenController() {
 
 		humanMessage.textContent = 'Fleet deployed! Your turn to attack!';
 	});
+
+	rotateBtn.addEventListener('click', () => {
+		if (currentOrientation === 'horizontal') {
+			currentOrientation = 'vertical';
+		} else {
+			currentOrientation = 'horizontal';
+		}
+
+		rotateBtn.textContent = `Orientation: ${currentOrientation.charAt(0).toUpperCase() + currentOrientation.slice(1)}`;
+		rotateBtn.setAttribute('data-orientation', currentOrientation);
+	});
+
+	const renderShipDock = () => {
+		shipDockDOM.textContent = '';
+
+		game.p1.board.ships.forEach((ship) => {
+			const shipContainer = document.createElement('div');
+			shipContainer.classList.add('dock-ship');
+			shipContainer.setAttribute('draggable', 'true');
+
+			shipContainer.dataset.name = ship.name;
+			shipContainer.dataset.length = ship.length;
+
+			for (let i = 0; i < ship.length; i++) {
+				const segment = document.createElement('div');
+				segment.classList.add('ship-segment');
+				shipContainer.appendChild(segment);
+			}
+
+			shipDockDOM.appendChild(shipContainer);
+		});
+	};
 
 	const createBoard = (gameBoard, parentElement, isHidden) => {
 		parentElement.textContent = '';
