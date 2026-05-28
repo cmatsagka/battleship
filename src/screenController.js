@@ -103,9 +103,9 @@ export function screenController() {
 			const squares = [];
 			for (let i = 0; i < length; i++) {
 				const targetX =
-					orientation === 'horizontal' ? startX + 1 : startX;
+					orientation === 'horizontal' ? startX + i : startX;
 				const targetY =
-					orientation === 'vertical' ? startY + 1 : startY;
+					orientation === 'vertical' ? startY + i : startY;
 				squares.push({ x: targetX, y: targetY });
 			}
 			return squares;
@@ -144,6 +144,7 @@ export function screenController() {
 			const coordinates = getOccupiedSquares(
 				startX,
 				startY,
+				length,
 				currentOrientation
 			);
 
@@ -173,7 +174,7 @@ export function screenController() {
 			const target = e.target.closest('.square');
 			if (!target) return;
 
-			const startX = parseInt(target.data.x);
+			const startX = parseInt(target.dataset.x);
 			const startY = parseInt(target.dataset.y);
 			const name = draggedShipElement.dataset.name;
 
