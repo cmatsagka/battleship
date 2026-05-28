@@ -41,7 +41,9 @@ export function screenController() {
 
 	randomP1Btn.addEventListener('click', () => {
 		randomizePlayerShips(game.p1, p1BoardDOM, false);
+		shipDockDOM.textContent = '';
 		startMatchBtn.classList.remove('hidden');
+		setupDragAndBoard();
 	});
 
 	startMatchBtn.addEventListener('click', () => {
@@ -86,6 +88,7 @@ export function screenController() {
 
 	const setupDragAndBoard = () => {
 		let draggedShipElement = null;
+		let pickedUpShipName = null;
 
 		const dockShips = document.querySelectorAll('.dock-ship');
 		dockShips.forEach((shipEl) => {
@@ -95,7 +98,55 @@ export function screenController() {
 					return;
 				}
 				draggedShipElement = shipEl;
+				pickedUpShipName = null;
 				e.dataTransfer.setData('text/plain', shipEl.dataset.name);
+			});
+		});
+
+		const boardShips = p1BoardDOM.querySelectorAll('.square.ship');
+		boardShips.forEach((shipSquare) => {
+			shipSquare.addEventListener('dragstart', (e) => {
+				if (isGameStarted) return e.preventDefault();
+
+				const shipName = shipSquare.dataset.shipName;
+				pickedUpShipName = shipName;
+
+				const shipObject = game.p1.board.ships.find(
+					(s) => s.name === shipName
+				);
+
+				draggedShipElement = {
+					dataset: {
+						name: shipName,
+						length: shipObject.length,
+					},
+				};
+
+				game.p1.board.ships.forEach((s) => {
+					if (s.name === shipName) {
+						for (let x = 0; x < 10; x++) {
+							for (let y = 0; y < 10; y++) {
+								const currentSquareContent =
+									game.p1.board.getSquare(x, y);
+								if (
+									currentSquareContent &&
+									currentSquareContent.name === shipName
+								) {
+									if (game.p1.board.board) {
+										game.p1.board.board[(x, y)] = null;
+									}
+								} else {
+									try {
+										game.p1.board.board[x][y] = null;
+									} catch (e) {}
+								}
+							}
+						}
+					}
+				});
+
+				createBoard(game.p1.board, p1BoardDOM, false);
+				setupDragAndBoard();
 			});
 		});
 
@@ -187,7 +238,12 @@ export function screenController() {
 			);
 
 			if (placementSuccessful) {
-				draggedShipElement.remove();
+				if (
+					pickedUpShipName === null &&
+					typeof draggedShipElement.remove === 'function'
+				) {
+					draggedShipElement.remove();
+				}
 				createBoard(game.p1.board, p1BoardDOM, false);
 
 				if (shipDockDOM.children.length === 0) {
@@ -196,8 +252,15 @@ export function screenController() {
 					humanMessage.textContent =
 						'All ships deployed! Click Commit Fleet to start your battle!';
 				}
+			} else {
+				if (pickedUpShipName !== null) {
+					randomizePlayerShips(game.p1, p1BoardDOM, false);
+					shipDockDOM.textContent = '';
+				}
 			}
 			draggedShipElement = null;
+			pickedUpShipName = null;
+			setupDragAndBoard();
 		});
 	};
 
@@ -219,6 +282,10 @@ export function screenController() {
 					square.classList.add('hit');
 				} else if (targetState !== null && !isHidden) {
 					square.classList.add('ship');
+					if (!isHidden) {
+						square.setAttribute('draggable', 'true');
+						square.dataset.shipName = targetState.name;
+					}
 				} else {
 					square.classList.add('sea');
 				}
