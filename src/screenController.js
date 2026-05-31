@@ -143,7 +143,7 @@ export function screenController() {
 							if (headX === null && headY === null) {
 								headX = x;
 								headY = y;
-							} else if (x > headX && y > headY) {
+							} else if (x === headX && y > headY) {
 								originalOrientation = 'vertical';
 							}
 						}
@@ -287,8 +287,8 @@ export function screenController() {
 				}
 			} else {
 				if (pickedUpShipName !== null) {
-					const origX = draggedShipElement.dataset.origX;
-					const origY = draggedShipElement.dataset.origY;
+					const origX = parseInt(draggedShipElement.dataset.origX);
+					const origY = parseInt(draggedShipElement.dataset.origY);
 					const origOrient = draggedShipElement.dataset.origOrient;
 
 					game.p1.board.placeShip(
