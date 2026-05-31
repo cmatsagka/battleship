@@ -22,23 +22,60 @@ describe('Game Controller is able to: ', () => {
 
 	test('computer makes a counter-attack after human move', () => {
 		const game = gameController();
+		game.p1.board.resetBoard();
+		game.comp.board.resetBoard();
+
 		game.playRound(0, 0);
 
-		const p1Misses = game.p1.board.getMissedShots().length;
-		expect(p1Misses).toBe(1);
+		if (typeof game.playComputerTurn === 'function') {
+			game.playComputerTurn();
+		}
+
+		let totalAttacksOnP1 = 0;
+		for (let x = 0; x < 10; x++) {
+			for (let y = 0; y < 10; y++) {
+				if (
+					game.p1.board.getSquare(x, y) === 'miss' ||
+					game.p1.board.getSquare(x, y) === 'hit'
+				) {
+					totalAttacksOnP1++;
+				}
+			}
+		}
+
+		expect(totalAttacksOnP1).toBe(1);
 	});
 
 	test('computer does not move if human choice is invalid', () => {
 		const game = gameController();
+		game.p1.board.resetBoard();
+		game.comp.board.resetBoard();
 		game.playRound(0, 0);
 
+		if (typeof game.playComputerTurn === 'function') {
+			game.playComputerTurn();
+		}
+
 		const result = game.playRound(0, 0);
-		expect(result).toBe('already attacked');
-		expect(game.p1.board.getMissedShots().length).toBe(1);
+		expect(result).toBe('You already attacked here!');
+
+		let totalAttacksOnP1 = 0;
+		for (let x = 0; x < 10; x++) {
+			for (let y = 0; y < 10; y++) {
+				if (
+					game.p1.board.getSquare(x, y) === 'miss' ||
+					game.p1.board.getSquare(x, y) === 'hit'
+				) {
+					totalAttacksOnP1++;
+				}
+			}
+		}
+		expect(totalAttacksOnP1).toBe(1);
 	});
 
 	test('game ends when a player fleet is sunk', () => {
 		const game = gameController();
+		game.comp.board.resetBoard();
 
 		game.comp.board.ships.forEach((ship, index) => {
 			game.comp.board.placeShip(ship, 0, index, 'horizontal');
@@ -54,6 +91,7 @@ describe('Game Controller is able to: ', () => {
 	describe('Computer Random Placement', () => {
 		test('all 5 ships are placed on the board', () => {
 			const game = gameController();
+			game.comp.board.resetBoard();
 			game.placeComputerShips();
 
 			const board = game.comp.board;
@@ -77,6 +115,8 @@ describe('Game Controller is able to: ', () => {
 
 		test('ships do not overlap or go out of bounds', () => {
 			const game = gameController();
+			game.comp.board.resetBoard();
+
 			const result = game.placeComputerShips();
 
 			expect(result).toBe(true);

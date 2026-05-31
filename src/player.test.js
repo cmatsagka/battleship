@@ -24,7 +24,7 @@ describe('player factory', () => {
 		const board = gameBoard();
 		board.receiveAttack(0, 0);
 
-		expect(board.receiveAttack(0, 0)).toBe('already attacked');
+		expect(board.receiveAttack(0, 0)).toBe('You already attacked here!');
 	});
 
 	test('computer can make a random attack', () => {
