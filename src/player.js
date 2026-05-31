@@ -14,7 +14,7 @@ export function player(name, type = 'human') {
 			x = Math.floor(Math.random() * 10);
 			y = Math.floor(Math.random() * 10);
 			result = enemyBoard.receiveAttack(x, y);
-		} while (result === 'already attacked');
+		} while (typeof result === 'string');
 
 		return { x, y, result };
 	};
