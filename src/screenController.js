@@ -132,34 +132,31 @@ export function screenController() {
 					(s) => s.name === shipName
 				);
 
-				const originalX = parseInt(shipSquare.dataset.x);
-				const originalY = parseInt(shipSquare.dataset.y);
-
+				let headX = null;
+				let headY = null;
 				let originalOrientation = 'horizontal';
 
-				const checkBelow =
-					originalX + 1 < 10
-						? game.p1.board.getSquare(originalX + 1, originalY)
-						: null;
-				const checkAbove =
-					originalY - 1 >= 0
-						? game.p1.board.getSquare(originalX - 1, originalY)
-						: null;
-
-				if (
-					(checkBelow && checkBelow.name === shipName) ||
-					checkAbove & (checkAbove.name === shipName)
-				) {
-					originalOrientation = 'vertical';
+				for (let x = 0; x < 10; x++) {
+					for (let y = 0; y < 10; y++) {
+						const cell = game.p1.board.getSquare(x, y);
+						if (cell && cell.name === shipName) {
+							if (headX === null && headY === null) {
+								headX = x;
+								headY = y;
+							} else if (x > headX && y > headY) {
+								originalOrientation = 'vertical';
+							}
+						}
+					}
 				}
 
 				draggedShipElement = {
 					dataset: {
 						name: shipName,
 						length: shipObject.length,
-						origX: originalX,
-						origY: originalY,
-						origOrientation: originalOrientation,
+						origX: headX,
+						origY: headY,
+						origOrient: originalOrientation,
 					},
 				};
 
