@@ -69,22 +69,23 @@ export function screenController() {
 	const renderShipDock = () => {
 		shipDockDOM.textContent = '';
 
-		let isShipPlacedOnBoard = false;
-
-		for (let x = 0; x < 10; x++) {
-			for (let y = 0; y < 10; y++) {
-				const currentSquare = game.p1.board.getSquare(x, y);
-
-				if (currentSquare && currentSquare.name === ship.name) {
-					isShipPlacedOnBoard = true;
-					break;
-				}
-			}
-			if (isShipPlacedOnBoard) break;
-		}
-		if (isShipPlacedOnBoard) return;
-
 		game.p1.board.ships.forEach((ship) => {
+			let isShipPlacedOnBoard = false;
+
+			for (let x = 0; x < 10; x++) {
+				for (let y = 0; y < 10; y++) {
+					const currentSquare = game.p1.board.getSquare(x, y);
+
+					if (currentSquare && currentSquare.name === ship.name) {
+						isShipPlacedOnBoard = true;
+						break;
+					}
+				}
+				if (isShipPlacedOnBoard) break;
+			}
+
+			if (isShipPlacedOnBoard) return;
+
 			const shipContainer = document.createElement('div');
 			shipContainer.classList.add('dock-ship');
 			shipContainer.setAttribute('draggable', 'true');
