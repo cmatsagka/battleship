@@ -122,4 +122,51 @@ describe('Game Controller is able to: ', () => {
 			expect(result).toBe(true);
 		});
 	});
+
+	describe('drag n drop state edge cases', () => {
+		test('removing a ship from data matrix leaves cells empty', () => {
+			const game = gameController();
+			const ship = game.p1.board.ships[0];
+
+			game.p1.board.placeShip(ship, 2, 2, 'horizontal');
+			expect(game.p1.board.getSquare(2, 2)).not.toBeNull();
+
+			game.p1.board.removeShipFromDataMatrix(ship.name);
+			expect(game.p1.board.getSquare(2, 2)).toBeNull();
+		});
+	});
+
+	describe('hit-tracking validation', () => {
+		test('playRound correctly handles and reports a hit on an enemy ship', () => {
+			const game = gameController();
+			game.comp.board.resetBoard();
+
+			const targetShip = game.comp.board.ships[0];
+			game.comp.board.placeShip(targetShip, 0, 0, 'horizontal');
+
+			const result = game.playRound(0, 0);
+
+			expect(result.humanResult.hit).toBe(true);
+			expect(game.comp.board.getSquare(0, 0)).toBe('hit');
+		});
+	});
+
+	describe('computer intelligence when attacking', () => {
+		test('computer AI never attacks the same coordinate twice', () => {
+			const game = gameController();
+			game.p1.board.resetBoard();
+
+			for (let x = 0; x < 10; x++) {
+				for (let y = 0; y < 10; y++) {
+					if (x === 9 && y === 9) continue;
+					game.p1.board.receiveAttack(x, y);
+				}
+			}
+
+			game.playComputerTurn();
+
+			const lastCell = game.p1.board.getSquare(9, 9);
+			expect(['miss', 'hit']).toContain(lastCell);
+		});
+	});
 });
