@@ -101,7 +101,7 @@ body {
 
 .board-section {
 	width: 100%;
-	max-width: 450px;
+	max-width: 400px;
 	display: flex;
 	flex-direction: column;
 	align-items: center;
@@ -119,16 +119,27 @@ body {
 	border: var(--border-thick) solid var(--clr-border);
 }
 
-@media (min-width: 900px) {
+@media (min-width: 650px) {
 	.boards-container {
 		flex-direction: row;
 		justify-content: center;
 		align-items: flex-start;
+		gap: var(--spacing-md);
+	}
+
+	.board-section {
+		flex: 1;
+		min-width: 320px;
+	}
+}
+
+@media (min-width: 1024px) {
+	.boards-container {
 		gap: var(--spacing-xl);
 	}
 
 	.board-section {
-		min-width: 550px;
+		min-width: 480px;
 	}
 }
 
