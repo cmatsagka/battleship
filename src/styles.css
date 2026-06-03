@@ -183,22 +183,54 @@ body {
 
 #ship-dock {
 	display: flex;
-	gap: 15px;
-	margin-bottom: 20px;
-	cursor: grab;
+	flex-wrap: wrap;
+	gap: var(--spacing-md);
+	padding: var(--spacing-sm);
+	margin-bottom: var(--spacing-md);
 	user-select: none;
 	width: max-content;
+	background-color: var(--clr-surface);
+	border: var(--border-thick) solid var(--clr-border);
 }
 
 .ship-segment {
 	width: 30px;
 	height: 30px;
 	background-color: var(--clr-ship);
-	border: 1px solid var(--clr-border);
+	border: var(--border-slim) solid var(--clr-border);
+}
+
+.dock-ship {
+	display: flex;
+	cursor: grab;
+}
+
+.dock-ship[data-name='carrier' i] .ship-segment {
+	background-color: var(--clr-bg);
+}
+
+.dock-ship[data-name='battleship' i] .ship-segment {
+	background-color: var(--clr-sea);
+}
+
+.dock-ship[data-name='destroyer' i] .ship-segment {
+	background-color: var(--clr-miss);
+}
+
+.dock-ship[data-name='submarine' i] .ship-segment {
+	background-color: var(--clr-ship);
+}
+
+.dock-ship[data-name='patrol boat' i] .ship-segment {
+	background-color: var(--clr-hit);
 }
 
 .dock-ship:active {
 	cursor: grabbing;
+}
+
+.is-dragging {
+	opacity: 0.5;
 }
 
 .hidden {
