@@ -188,7 +188,9 @@ body {
 	padding: var(--spacing-sm);
 	margin-bottom: var(--spacing-md);
 	user-select: none;
-	width: max-content;
+	width: 100%;
+	max-width: 400px;
+	min-height: 80px;
 	background-color: var(--clr-surface);
 	border: var(--border-thick) solid var(--clr-border);
 }
@@ -227,6 +229,10 @@ body {
 
 .dock-ship:active {
 	cursor: grabbing;
+}
+
+.dock-ship .ship-segment + .ship-segment {
+	margin-left: calc(var(--border-slim) * -1);
 }
 
 .is-dragging {
