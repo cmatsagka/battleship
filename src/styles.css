@@ -93,26 +93,43 @@ body {
 
 .boards-container {
 	display: flex;
-	justify-content: center;
+	flex-direction: column;
 	align-items: center;
-	gap: var(--spacing-xl);
+	gap: var(--spacing-lg);
+	width: 100%;
+}
+
+.board-section {
+	width: 100%;
+	max-width: 450px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
 }
 
 .board-section h2 {
 	min-height: 3.5rem;
 }
 
-.board-section {
-	flex: 1;
-}
-
 .board {
-	max-width: 550px;
 	width: 100%;
 	display: grid;
 	grid-template-columns: repeat(10, 1fr);
 	margin-bottom: 20px;
 	border: var(--border-thick) solid var(--clr-border);
+}
+
+@media (min-width: 900px) {
+	.boards-container {
+		flex-direction: row;
+		justify-content: center;
+		align-items: flex-start;
+		gap: var(--spacing-xl);
+	}
+
+	.board-section {
+		min-width: 550px;
+	}
 }
 
 .square {
