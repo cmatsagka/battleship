@@ -38,19 +38,6 @@
 	box-sizing: border-box;
 }
 
-button {
-	padding: var(--spacing-sm);
-	border: var(--border-slim) solid var(--clr-border);
-	background-color: var(--clr-bg);
-	color: var(--clr-text-main);
-	font-weight: 400;
-}
-
-button:hover {
-	background-color: var(--clr-sea);
-	color: var(--clr-bg);
-}
-
 body {
 	font-family: var(--font-family);
 	padding: 1rem;
@@ -59,6 +46,20 @@ body {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
+}
+
+button {
+	padding: var(--spacing-sm);
+	border: var(--border-slim) solid var(--clr-border);
+	background-color: var(--clr-bg);
+	color: var(--clr-text-main);
+	font-weight: 400;
+	cursor: pointer;
+}
+
+button:hover {
+	background-color: var(--clr-sea);
+	color: var(--clr-bg);
 }
 
 .game-header {
@@ -74,7 +75,6 @@ body {
 	background-color: var(--clr-sea);
 	color: var(--clr-bg);
 	border: none;
-	cursor: pointer;
 }
 
 .game-container {
@@ -157,11 +157,11 @@ body {
 }
 
 .miss {
-	background-color: var(--clr-miss);
+	background-color: var(--clr-miss) !important;
 }
 
 .hit {
-	background-color: var(--clr-hit);
+	background-color: var(--clr-hit) !important;
 
 	display: flex;
 	align-items: center;
@@ -173,6 +173,15 @@ body {
 	width: 25%;
 	height: 25%;
 	background-color: var(--clr-text-main);
+}
+
+#comp-board .square.sea {
+	cursor: crosshair;
+}
+
+.square.hit,
+.square.miss {
+	cursor: not-allowed !important;
 }
 
 .hover-valid {
@@ -218,6 +227,14 @@ body {
 	cursor: grab;
 }
 
+.dock-ship:active {
+	cursor: grabbing;
+}
+
+.dock-ship .ship-segment + .ship-segment {
+	margin-left: calc(var(--border-slim) * -1);
+}
+
 .dock-ship[data-name='carrier' i] .ship-segment {
 	background-color: var(--clr-bg);
 }
@@ -236,14 +253,6 @@ body {
 
 .dock-ship[data-name='patrol boat' i] .ship-segment {
 	background-color: var(--clr-hit);
-}
-
-.dock-ship:active {
-	cursor: grabbing;
-}
-
-.dock-ship .ship-segment + .ship-segment {
-	margin-left: calc(var(--border-slim) * -1);
 }
 
 .is-dragging {
