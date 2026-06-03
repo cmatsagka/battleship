@@ -326,6 +326,7 @@ export function screenController() {
 					square.classList.add('hit');
 				} else if (targetState !== null && !isHidden) {
 					square.classList.add('ship');
+					square.dataset.shipName = targetState.name;
 					if (!isHidden) {
 						square.setAttribute('draggable', 'true');
 						square.dataset.shipName = targetState.name;

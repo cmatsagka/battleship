@@ -162,6 +162,17 @@ body {
 
 .hit {
 	background-color: var(--clr-hit);
+
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.hit::before {
+	content: '';
+	width: 25%;
+	height: 25%;
+	background-color: var(--clr-text-main);
 }
 
 .hover-valid {
