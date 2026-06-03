@@ -15,18 +15,21 @@
 	--spacing-lg: 2rem;
 	--spacing-xl: 3rem;
 
+	--border-slim: 2px;
+	--border-thick: 4px;
+
 	--clr-bg: #ffffff;
-	--clr-surface: #f8f9fa;
-	--clr-text-main: #212529;
-	--clr-text-muted: #6c757d;
+	--clr-surface: #f2f2f2;
+	--clr-text-main: #000000;
+	--clr-border: #000000;
 
-	--clr-sea: #e9ecef;
-	--clr-ship: #adb5bd;
-	--clr-hit: #dc3545;
-	--clr-miss: #495057;
+	--clr-sea: #1a365d;
+	--clr-ship: #718096;
+	--clr-hit: #e53e3e;
+	--clr-miss: #ecc94b;
 
-	--clr-valid-hover: rgba(40, 167, 69, 0.2);
-	--clr-invalid-hover: rgba(220, 53, 69, 0.2);
+	--clr-valid-hover: rgba(0, 0, 0, 0.1);
+	--clr-invalid-hover: rgba(229, 62, 62, 0.15);
 }
 
 * {
