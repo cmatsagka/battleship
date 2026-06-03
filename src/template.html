@@ -3,42 +3,42 @@
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>battleship</title>
+		<title>Battleship</title>
 	</head>
 	<body>
-		<header>
-			<h1>battleship</h1>
+		<header class="game-header">
+			<h1>Battleship</h1>
 			<div class="message-container">
 				<p id="human-message" class="message"></p>
 				<p id="comp-message" class="message"></p>
 			</div>
 			<button id="restart-btn" class="hidden">Play Again</button>
 		</header>
-		<main>
-			<div class="setup-container">
+		<main class="game-container">
+			<section id="setup-phase" class="setup-wrapper">
 				<div class="setup-controls">
 					<button id="random-p1-btn">Randomize Fleet</button>
 					<button id="start-match-btn" class="hidden">
 						Commit Fleet & Start
 					</button>
 				</div>
-			</div>
-			<div id="fleet-container">
-				<h2>Deploy the fleet</h2>
-				<div id="ship-dock"></div>
-				<button id="rotate-btn" data-orientation="horizontal">
-					Orientation: Horizontal
-				</button>
-			</div>
+				<div id="fleet-container">
+					<h2>Deploy the Fleet</h2>
+					<div id="ship-dock"></div>
+					<button id="rotate-btn" data-orientation="horizontal">
+						Orientation: Horizontal
+					</button>
+				</div>
+			</section>
 			<div class="boards-container">
-				<div class="section player">
-					<h2>Player's board</h2>
+				<section class="board-section player">
+					<h2 id="player-heading">Player's Board</h2>
 					<div id="human-board" class="board"></div>
-				</div>
-				<div class="section computer">
-					<h2>Computer's board</h2>
+				</section>
+				<section class="board-section computer">
+					<h2 id="computer-heading">Computer's Board</h2>
 					<div id="comp-board" class="board"></div>
-				</div>
+				</section>
 			</div>
 		</main>
 		<footer class="site-footer">
