@@ -8,7 +8,7 @@
 	<body>
 		<header class="game-header">
 			<h1>Battleship</h1>
-			<div class="message-container">
+			<div class="message-container" aria-live="polite">
 				<p id="human-message" class="message"></p>
 				<p id="comp-message" class="message"></p>
 			</div>
@@ -24,20 +24,36 @@
 				</div>
 				<div id="fleet-container">
 					<h2>Deploy the Fleet</h2>
-					<div id="ship-dock"></div>
+					<div id="ship-dock" aria-label="Ship deployment dock"></div>
 					<button id="rotate-btn" data-orientation="horizontal">
 						Orientation: Horizontal
 					</button>
 				</div>
 			</section>
 			<div class="boards-container">
-				<section class="board-section player">
+				<section
+					class="board-section player"
+					aria-labelledby="player-heading"
+				>
 					<h2 id="player-heading">Player's Board</h2>
-					<div id="human-board" class="board"></div>
+					<div
+						id="human-board"
+						class="board"
+						role="grid"
+						aria-label="Your grid map"
+					></div>
 				</section>
-				<section class="board-section computer">
+				<section
+					class="board-section computer"
+					aria-labelledby="computer-heading"
+				>
 					<h2 id="computer-heading">Computer's Board</h2>
-					<div id="comp-board" class="board"></div>
+					<div
+						id="comp-board"
+						class="board"
+						role="grid"
+						aria-label="Enemy radar map"
+					></div>
 				</section>
 			</div>
 		</main>
