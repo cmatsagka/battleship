@@ -7,12 +7,14 @@
 	</head>
 	<body>
 		<header class="game-header">
-			<h1>Battleship</h1>
+			<div class="header-controls">
+				<h1>Battleship</h1>
+				<button id="restart-btn" class="hidden">Play Again</button>
+			</div>
 			<div class="message-container" aria-live="polite">
 				<p id="human-message" class="message"></p>
 				<p id="comp-message" class="message"></p>
 			</div>
-			<button id="restart-btn" class="hidden">Play Again</button>
 		</header>
 		<main class="game-container">
 			<section id="setup-phase" class="setup-wrapper">
