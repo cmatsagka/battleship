@@ -206,6 +206,7 @@ button:hover {
 #ship-dock {
 	display: flex;
 	flex-wrap: wrap;
+	justify-content: center;
 	gap: var(--spacing-md);
 	padding: var(--spacing-sm);
 	margin-bottom: var(--spacing-md);

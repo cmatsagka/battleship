@@ -340,6 +340,18 @@ export function screenController() {
 		}
 	};
 
+	const handleOrientationChange = (mql) => {
+		if (mql.matches) {
+			humanMessage.textContent =
+				'Rotate your device for a better view of the battlefield!';
+		}
+	};
+
+	const mql = window.matchMedia(
+		'(max-width: 600px) and (orientation: portrait)'
+	);
+	mql.addEventListener('change', handleOrientationChange);
+
 	const startNewGame = () => {
 		game = gameController();
 		isGameStarted = false;
