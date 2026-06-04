@@ -273,5 +273,9 @@ button:hover {
 
 .site-footer {
 	margin-top: auto;
+	width: 100%;
+	font-size: var(--font-size-sm);
 	font-weight: 700;
+	color: var(--clr-ship);
+	text-align: center;
 }
