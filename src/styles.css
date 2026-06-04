@@ -74,7 +74,7 @@ button:hover {
 	padding: var(--spacing-sm);
 	background-color: var(--clr-sea);
 	color: var(--clr-bg);
-	border: none;
+	border: var(--border-slim) solid var(--clr-border);
 }
 
 .game-container {
@@ -146,6 +146,8 @@ button:hover {
 .square {
 	aspect-ratio: 1 / 1;
 	border: var(--border-slim) solid var(--clr-border);
+	margin-right: calc(var(--border-slim) * -1);
+	margin-bottom: calc(var(--border-slim) * -1);
 }
 
 .sea {
