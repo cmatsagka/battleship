@@ -2,6 +2,9 @@
 
 :root {
 	--font-family: 'Inter', sans-serif;
+	@supports (font-variation-settings: normal) {
+		font-family: 'Inter var', sans-serif;
+	}
 
 	--font-size-sm: 0.875rem;
 	--font-size-base: 1rem;
@@ -55,6 +58,7 @@ button {
 	color: var(--clr-text-main);
 	font-weight: 400;
 	cursor: pointer;
+	font: inherit;
 }
 
 button:hover {
@@ -117,6 +121,7 @@ button:hover {
 	grid-template-columns: repeat(10, 1fr);
 	margin-bottom: 20px;
 	border: var(--border-thick) solid var(--clr-border);
+	overflow: hidden;
 }
 
 @media (min-width: 650px) {
@@ -264,4 +269,9 @@ button:hover {
 
 .hidden {
 	display: none !important;
+}
+
+.site-footer {
+	margin-top: auto;
+	font-weight: 700;
 }
