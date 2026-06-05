@@ -274,6 +274,15 @@ button:hover {
 	min-height: 3.5rem;
 }
 
+#dock-status-title {
+	font-size: var(--font-size-sm);
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+	text-align: center;
+	color: var(--clr-ship);
+	min-height: 1.5rem;
+}
+
 #fleet-container {
 	display: flex;
 	flex-direction: column;

@@ -52,6 +52,10 @@ export function screenController() {
 		startMatchBtn.classList.add('hidden');
 		isGameStarted = true;
 
+		const dockTitle = document.querySelector('#dock-status-title');
+		if (dockTitle) {
+			dockTitle.textContent = 'Fleet sailing';
+		}
 		humanMessage.textContent = 'Fleet deployed! Your turn to attack!';
 	});
 
@@ -68,6 +72,7 @@ export function screenController() {
 
 	const renderShipDock = () => {
 		shipDockDOM.textContent = '';
+		let unplacedCount = 0;
 
 		game.p1.board.ships.forEach((ship) => {
 			let isShipPlacedOnBoard = false;
@@ -86,10 +91,11 @@ export function screenController() {
 
 			if (isShipPlacedOnBoard) return;
 
+			unplacedCount++;
+
 			const shipContainer = document.createElement('div');
 			shipContainer.classList.add('dock-ship');
 			shipContainer.setAttribute('draggable', 'true');
-
 			shipContainer.dataset.name = ship.name;
 			shipContainer.dataset.length = ship.length;
 
@@ -101,6 +107,15 @@ export function screenController() {
 
 			shipDockDOM.appendChild(shipContainer);
 		});
+
+		const dockTitle = document.querySelector('#dock-status-title');
+		if (dockTitle) {
+			if (unplacedCount > 0) {
+				dockTitle.textContent = `In dock: ${unplacedCount}`;
+			} else {
+				dockTitle.textContent = 'Fleet Mobilized';
+			}
+		}
 	};
 
 	const setupDragAndBoard = () => {
