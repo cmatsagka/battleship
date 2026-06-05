@@ -248,6 +248,32 @@ button:hover {
 	cursor: no-drop;
 }
 
+.setup-wrapper {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	gap: var(--spacing-md);
+	width: 100%;
+	min-height: calc(
+		var(--font-size-base) + (var(--spacing-sm) * 2) +
+			(var(--border-slim) * 2)
+	);
+}
+
+.setup-controls {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	align-content: center;
+	gap: var(--spacing-md);
+	padding: var(--spacing-md);
+	width: 100%;
+	max-width: 900px;
+	height: 120px;
+	min-height: 120px;
+}
+
 #fleet-container {
 	display: flex;
 	flex-direction: column;
@@ -259,13 +285,15 @@ button:hover {
 	display: flex;
 	flex-wrap: wrap;
 	justify-content: center;
+	align-content: center;
 	gap: var(--spacing-md);
 	padding: var(--spacing-sm);
 	margin-bottom: var(--spacing-md);
 	user-select: none;
 	width: 100%;
 	max-width: 400px;
-	min-height: 80px;
+	min-height: 120px;
+	height: 120px;
 	background-color: var(--clr-surface);
 	border: var(--border-thick) solid var(--clr-border);
 }
