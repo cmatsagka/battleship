@@ -75,7 +75,8 @@ button:hover {
 	flex-direction: column;
 	width: 100%;
 	max-width: 900px;
-	gap: var(--spacing-md);
+	min-height: 180px;
+	gap: var(--spacing-sm);
 	padding: var(--spacing-md) 0;
 	border-bottom: var(--border-thick) solid var(--clr-border);
 }
@@ -100,6 +101,21 @@ button:hover {
 	padding: var(--spacing-sm) var(--spacing-md);
 	width: 100%;
 	text-align: center;
+	height: 4.5rem;
+	min-height: 4.5rem;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	overflow: hidden;
+}
+
+#human-message,
+#comp-message {
+	width: 100%;
+	line-height: 1.2;
+	min-height: 1.2em;
+	margin-bottom: 0.25rem;
 }
 
 #restart-btn {
