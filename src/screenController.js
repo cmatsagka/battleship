@@ -362,6 +362,7 @@ export function screenController() {
 			'Deploy your fleet! Drag ships to your board or click to Randomize.';
 		compMessage.textContent = '';
 		restartBtn.classList.add('hidden');
+		restartBtn.classList.remove('pop-attention');
 
 		randomP1Btn.classList.remove('hidden');
 		startMatchBtn.classList.add('hidden');
@@ -387,7 +388,10 @@ export function screenController() {
 
 		if (typeof roundResult === 'string') {
 			humanMessage.textContent = roundResult;
-			if (game.isGameOver()) restartBtn.classList.remove('hidden');
+			if (game.isGameOver()) {
+				restartBtn.classList.remove('hidden');
+				restartBtn.classList.add('pop-attention');
+			}
 			return;
 		}
 
@@ -410,6 +414,7 @@ export function screenController() {
 			humanMessage.textContent = 'Human Wins!';
 			compMessage.textContent = '';
 			restartBtn.classList.remove('hidden');
+			restartBtn.classList.add('pop-attention');
 			return;
 		}
 
@@ -436,6 +441,16 @@ export function screenController() {
 
 			createBoard(game.p1.board, p1BoardDOM, false);
 			createBoard(game.comp.board, compBoardDOM, true);
+
+			if (game.isGameOver()) {
+				humanMessage.textContent =
+					'Computer Wins! Your fleet was destroyed.';
+				compMessage.textContent = '';
+				restartBtn.classList.remove('hidden');
+				restartBtn.classList.add('pop-attention');
+				isComputerThinking = false;
+				return;
+			}
 
 			isComputerThinking = false;
 		}, 1000);
