@@ -108,6 +108,23 @@ button:hover {
 	border: var(--border-slim) solid var(--clr-border);
 }
 
+.pop-attention {
+	animation: gentlePop 1.5s infinite ease-in-out;
+}
+
+@keyframes gentlePop {
+	0%,
+	100% {
+		transform: scale(1);
+		border-width: var(--border-slim);
+	}
+	50% {
+		transform: scale(1.05);
+		border-width: var(--border-thick);
+		box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+	}
+}
+
 .game-container {
 	display: flex;
 	flex-direction: column;
@@ -273,9 +290,9 @@ button:hover {
 	opacity: 0.5;
 }
 
-/* .hidden {
+.hidden {
 	display: none !important;
-} */
+}
 
 .site-footer {
 	margin-top: auto;
