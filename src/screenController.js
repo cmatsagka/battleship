@@ -42,7 +42,7 @@ export function screenController() {
 
 	randomP1Btn.addEventListener('click', () => {
 		randomizePlayerShips(game.p1, p1BoardDOM, false);
-		shipDockDOM.textContent = '';
+		renderShipDock();
 		startMatchBtn.classList.remove('hidden');
 		setupDragAndBoard();
 	});
@@ -50,6 +50,7 @@ export function screenController() {
 	startMatchBtn.addEventListener('click', () => {
 		randomP1Btn.classList.add('hidden');
 		startMatchBtn.classList.add('hidden');
+		rotateBtn.classList.add('hidden');
 		isGameStarted = true;
 
 		const dockTitle = document.querySelector('#dock-status-title');
@@ -294,6 +295,8 @@ export function screenController() {
 				}
 				createBoard(game.p1.board, p1BoardDOM, false);
 
+				renderShipDock();
+
 				if (shipDockDOM.children.length === 0) {
 					startMatchBtn.classList.remove('hidden');
 					randomP1Btn.classList.add('hidden');
@@ -316,6 +319,7 @@ export function screenController() {
 						'Invalid placement! Ship returned to its original position.';
 				}
 				createBoard(game.p1.board, p1BoardDOM, false);
+				renderShipDock();
 			}
 			draggedShipElement = null;
 			pickedUpShipName = null;
@@ -380,6 +384,8 @@ export function screenController() {
 		restartBtn.classList.remove('pop-attention');
 
 		randomP1Btn.classList.remove('hidden');
+		rotateBtn.classList.remove('hidden');
+		rotateBtn.textContent = 'Orientation: Horizontal';
 		startMatchBtn.classList.add('hidden');
 
 		game.placeComputerShips();
