@@ -82,9 +82,10 @@ button:hover {
 
 .header-controls {
 	display: flex;
-	justify-content: space-between;
+	flex-wrap: wrap;
+	justify-content: center;
 	align-items: center;
-	gap: var(--spacing-sm);
+	gap: var(--spacing-md);
 	width: 100%;
 }
 
@@ -306,6 +307,10 @@ button:hover {
 @media (min-width: 650px) {
 	.game-header {
 		gap: var(--spacing-sm);
+	}
+
+	.header-controls {
+		justify-content: space-between;
 	}
 
 	.boards-container {
