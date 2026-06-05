@@ -425,8 +425,6 @@ export function screenController() {
 
 			if (typeof compRoundResult === 'string') {
 				compMessage.textContent = compRoundResult;
-				if (game.isGameOver()) restartBtn.classList.remove('hidden');
-				return;
 			} else {
 				const compHit = compRoundResult.compResult;
 
@@ -447,11 +445,12 @@ export function screenController() {
 					'Computer Wins! Your fleet was destroyed.';
 				compMessage.textContent = '';
 				restartBtn.classList.remove('hidden');
-				restartBtn.classList.add('pop-attention');
+				setTimeout(() => {
+					restartBtn.classList.add('pop-attention');
+				}, 10);
 				isComputerThinking = false;
 				return;
 			}
-
 			isComputerThinking = false;
 		}, 1000);
 	});
