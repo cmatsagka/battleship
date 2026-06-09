@@ -274,6 +274,24 @@ button:hover {
 	min-height: 3.5rem;
 }
 
+#rotate-btn {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.8rem;
+	padding: 0.8rem 1rem;
+	border: var(--border-thick) solid var(--clr-border);
+	cursor: pointer;
+	font-weight: 600;
+}
+
+#rotate-btn .rotate-icon {
+	transition: transform 0.3s ease;
+}
+
+#rotate-btn.is-vertical .rotate-icon {
+	transform: rotate(90deg);
+}
+
 #dock-status-title {
 	font-size: var(--font-size-sm);
 	text-transform: uppercase;

@@ -10,9 +10,9 @@ export function screenController() {
 	const compMessage = document.querySelector('#comp-message');
 	const restartBtn = document.querySelector('#restart-btn');
 	const randomP1Btn = document.querySelector('#random-p1-btn');
+	const rotateBtn = document.querySelector('#rotate-btn');
 	const startMatchBtn = document.querySelector('#start-match-btn');
 	const shipDockDOM = document.querySelector('#ship-dock');
-	const rotateBtn = document.querySelector('#rotate-btn');
 
 	let game;
 	let isComputerThinking;
@@ -47,10 +47,30 @@ export function screenController() {
 		setupDragAndBoard();
 	});
 
+	const updateOrientationUI = () => {
+		const rotateText = document.querySelector('#rotate-text');
+		if (rotateText) {
+			rotateText.textContent =
+				currentOrientation.charAt(0).toUpperCase() +
+				currentOrientation.slice(1);
+		}
+		rotateBtn.setAttribute('data-orientation', currentOrientation);
+		rotateBtn.classList.toggle(
+			'is-vertical',
+			currentOrientation === 'vertical'
+		);
+	};
+
+	rotateBtn.addEventListener('click', () => {
+		currentOrientation =
+			currentOrientation === 'horizontal' ? 'vertical' : 'horizontal';
+
+		updateOrientationUI();
+	});
+
 	startMatchBtn.addEventListener('click', () => {
 		randomP1Btn.classList.add('hidden');
 		startMatchBtn.classList.add('hidden');
-		rotateBtn.classList.add('hidden');
 		isGameStarted = true;
 
 		const dockTitle = document.querySelector('#dock-status-title');
@@ -60,17 +80,6 @@ export function screenController() {
 		humanMessage.textContent = 'Fleet deployed! Your turn to attack!';
 	});
 
-	rotateBtn.addEventListener('click', () => {
-		if (currentOrientation === 'horizontal') {
-			currentOrientation = 'vertical';
-		} else {
-			currentOrientation = 'horizontal';
-		}
-
-		rotateBtn.textContent = `Orientation: ${currentOrientation.charAt(0).toUpperCase() + currentOrientation.slice(1)}`;
-		rotateBtn.setAttribute('data-orientation', currentOrientation);
-	});
-
 	const renderShipDock = () => {
 		shipDockDOM.textContent = '';
 		let unplacedCount = 0;
@@ -78,8 +87,8 @@ export function screenController() {
 		game.p1.board.ships.forEach((ship) => {
 			let isShipPlacedOnBoard = false;
 
-			for (let x = 0; x < 10; x++) {
-				for (let y = 0; y < 10; y++) {
+			for (let y = 0; y < 10; y++) {
+				for (let x = 0; x < 10; x++) {
 					const currentSquare = game.p1.board.getSquare(x, y);
 
 					if (currentSquare && currentSquare.name === ship.name) {
@@ -107,6 +116,11 @@ export function screenController() {
 			}
 
 			shipDockDOM.appendChild(shipContainer);
+
+			shipContainer.addEventListener('dblclick', () => {
+				rotateBtn.click();
+				humanMessage.textContent = `Dock placement orientation changed to ${currentOrientation}!`;
+			});
 		});
 
 		const dockTitle = document.querySelector('#dock-status-title');
@@ -152,8 +166,8 @@ export function screenController() {
 				let headY = null;
 				let originalOrientation = 'horizontal';
 
-				for (let x = 0; x < 10; x++) {
-					for (let y = 0; y < 10; y++) {
+				for (let y = 0; y < 10; y++) {
+					for (let x = 0; x < 10; x++) {
 						const cell = game.p1.board.getSquare(x, y);
 						if (cell && cell.name === shipName) {
 							if (headX === null && headY === null) {
@@ -182,16 +196,64 @@ export function screenController() {
 				setupDragAndBoard();
 			});
 
-			shipSquare.addEventListener('click', () => {
+			shipSquare.addEventListener('dblclick', () => {
 				if (isGameStarted) return;
 
 				const shipName = shipSquare.dataset.shipName;
+				const shipObject = game.p1.board.ships.find(
+					(s) => s.name === shipName
+				);
+
+				if (!shipObject) return;
+
+				let headX = null;
+				let headY = null;
+				let shipActualOrient = 'horizontal';
+
+				for (let y = 0; y < 10; y++) {
+					for (let x = 0; x < 10; x++) {
+						const cell = game.p1.board.getSquare(x, y);
+						if (cell && cell.name === shipName) {
+							if (headX === null && headY === null) {
+								headX = x;
+								headY = y;
+							} else if (x === headX && y > headY) {
+								shipActualOrient = 'vertical';
+							}
+						}
+					}
+				}
+				const flippedOrient =
+					shipActualOrient === 'horizontal'
+						? 'vertical'
+						: 'horizontal';
+
 				game.p1.board.removeShipFromDataMatrix(shipName);
 
-				startMatchBtn.classList.add('hidden');
-				randomP1Btn.classList.remove('hidden');
-				humanMessage.textContent =
-					'Deploy your fleet! Drag ships to your board or click to Randomize.';
+				const canRotate = game.p1.board.isValidPlacement(
+					shipObject,
+					headX,
+					headY,
+					flippedOrient
+				);
+
+				if (canRotate) {
+					game.p1.board.placeShip(
+						shipObject,
+						headX,
+						headY,
+						flippedOrient
+					);
+					humanMessage.textContent = `${shipObject.name} rotated successfully!`;
+				} else {
+					game.p1.board.placeShip(
+						shipObject,
+						headX,
+						headY,
+						shipActualOrient
+					);
+					humanMessage.textContent = `Cannot rotate ${shipObject.name} here! Blocked or out of bounds.`;
+				}
 
 				createBoard(game.p1.board, p1BoardDOM, false);
 				renderShipDock();
@@ -234,18 +296,22 @@ export function screenController() {
 			const name = draggedShipElement.dataset.name;
 
 			const shipObject = game.p1.board.ships.find((s) => s.name === name);
+
+			const orientationToUse = draggedShipElement.dataset.origOrient
+				? draggedShipElement.dataset.origOrient
+				: currentOrientation;
 			const isValid = game.p1.board.isValidPlacement(
 				shipObject,
 				startX,
 				startY,
-				currentOrientation
+				orientationToUse
 			);
 
 			const coordinates = getOccupiedSquares(
 				startX,
 				startY,
 				length,
-				currentOrientation
+				orientationToUse
 			);
 
 			coordinates.forEach((coord) => {
@@ -279,11 +345,16 @@ export function screenController() {
 			const name = draggedShipElement.dataset.name;
 
 			const shipObject = game.p1.board.ships.find((s) => s.name === name);
+
+			const orientationToUse = draggedShipElement.dataset.origOrient
+				? draggedShipElement.dataset.origOrient
+				: currentOrientation;
+
 			const placementSuccessful = game.p1.board.placeShip(
 				shipObject,
 				startX,
 				startY,
-				currentOrientation
+				orientationToUse
 			);
 
 			if (placementSuccessful) {
@@ -330,8 +401,8 @@ export function screenController() {
 	const createBoard = (gameBoard, parentElement, isHidden) => {
 		parentElement.textContent = '';
 
-		for (let x = 0; x < 10; x++) {
-			for (let y = 0; y < 10; y++) {
+		for (let y = 0; y < 10; y++) {
+			for (let x = 0; x < 10; x++) {
 				const square = document.createElement('div');
 				square.dataset.x = x;
 				square.dataset.y = y;
@@ -376,6 +447,7 @@ export function screenController() {
 		isGameStarted = false;
 		isComputerThinking = false;
 		currentOrientation = 'horizontal';
+		updateOrientationUI();
 
 		humanMessage.textContent =
 			'Deploy your fleet! Drag ships to your board or click to Randomize.';
@@ -384,8 +456,6 @@ export function screenController() {
 		restartBtn.classList.remove('pop-attention');
 
 		randomP1Btn.classList.remove('hidden');
-		rotateBtn.classList.remove('hidden');
-		rotateBtn.textContent = 'Orientation: Horizontal';
 		startMatchBtn.classList.add('hidden');
 
 		game.placeComputerShips();
