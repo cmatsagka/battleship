@@ -29,7 +29,7 @@ export function gameBoard() {
 		initializeShips();
 	};
 
-	const getSquare = (x, y) => board[x][y];
+	const getSquare = (x, y) => board[y][x];
 
 	const isValidPlacement = (ship, x, y, orientation) => {
 		if (orientation === 'horizontal') {
@@ -39,12 +39,11 @@ export function gameBoard() {
 		}
 
 		for (let i = 0; i < ship.length; i++) {
-			if (orientation === 'horizontal' && board[x + i][y] !== null) {
+			if (orientation === 'horizontal' && board[y][x + i] !== null)
 				return false;
-			}
-			if (orientation === 'vertical' && board[x][y + i] !== null) {
+
+			if (orientation === 'vertical' && board[y + i][x] !== null)
 				return false;
-			}
 		}
 		return true;
 	};
@@ -54,9 +53,9 @@ export function gameBoard() {
 
 		for (let i = 0; i < ship.length; i++) {
 			if (orientation === 'horizontal') {
-				board[x + i][y] = ship;
+				board[y][x + i] = ship;
 			} else {
-				board[x][y + i] = ship;
+				board[y + i][x] = ship;
 			}
 		}
 
@@ -64,7 +63,7 @@ export function gameBoard() {
 	};
 
 	const receiveAttack = (x, y) => {
-		const target = board[x][y];
+		const target = board[y][x];
 
 		if (target === 'miss' || target === 'hit')
 			return 'You already attacked here!';
@@ -75,12 +74,12 @@ export function gameBoard() {
 			const isSunk = target.isSunk();
 			const shipName = target.name;
 
-			board[x][y] = 'hit';
+			board[y][x] = 'hit';
 			hitShots.push([x, y]);
 
 			return { hit: true, sunk: isSunk, shipName: shipName };
 		} else {
-			board[x][y] = 'miss';
+			board[y][x] = 'miss';
 			missedShots.push([x, y]);
 			return { hit: false, sunk: false };
 		}
@@ -95,8 +94,8 @@ export function gameBoard() {
 	const removeShipFromDataMatrix = (shipName) => {
 		for (let x = 0; x < 10; x++) {
 			for (let y = 0; y < 10; y++) {
-				if (board[x][y] && board[x][y].name === shipName) {
-					board[x][y] = null;
+				if (board[y][x] && board[y][x].name === shipName) {
+					board[y][x] = null;
 				}
 			}
 		}
