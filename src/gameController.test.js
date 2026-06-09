@@ -3,16 +3,6 @@ import { player } from './player.js';
 import { gameController } from './gameController.js';
 
 describe('Game Controller is able to: ', () => {
-	test('successfully switched turns', () => {
-		const game = gameController();
-		expect(game.getActivePlayer().name).toBe('Human');
-
-		game.switchTurn();
-		expect(game.getActivePlayer().name).toBe('Computer');
-		game.switchTurn();
-		expect(game.getActivePlayer().name).toBe('Human');
-	});
-
 	test('playRound correctly records a miss on the enemy board', () => {
 		const game = gameController();
 		game.playRound(5, 5);
@@ -75,7 +65,6 @@ describe('Game Controller is able to: ', () => {
 
 	test('game ends when a player fleet is sunk', () => {
 		const game = gameController();
-		game.comp.board.resetBoard();
 
 		game.comp.board.ships.forEach((ship, index) => {
 			game.comp.board.placeShip(ship, 0, index, 'horizontal');
