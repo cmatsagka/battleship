@@ -4,13 +4,14 @@ export function gameBoard() {
 	const missedShots = [];
 	const hitShots = [];
 	let board = Array.from({ length: 10 }, () => Array(10).fill(null));
+	let ships = [];
 
 	const resetBoard = () => {
 		board = Array.from({ length: 10 }, () => Array(10).fill(null));
 		missedShots.length = 0;
 		hitShots.length = 0;
 
-		ships.length = 0;
+		ships = [];
 		for (let i = 0; i < 5; i++) {
 			ships.push(ship(shipsSizes[i], shipNames[i]));
 		}
@@ -28,7 +29,6 @@ export function gameBoard() {
 		'Battleship',
 		'Carrier',
 	];
-	const ships = [];
 
 	for (let i = 0; i < 5; i++) {
 		ships.push(ship(shipsSizes[i], shipNames[i]));
