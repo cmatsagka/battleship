@@ -18,6 +18,8 @@ export function screenController() {
 	let isComputerThinking;
 	let isGameStarted;
 	let currentOrientation = 'horizontal';
+	let draggedShipElement = null;
+	let pickedUpShipName = null;
 
 	const randomizePlayerShips = (playerObject, boardDOM, isHidden) => {
 		playerObject.board.resetBoard();
@@ -40,13 +42,6 @@ export function screenController() {
 		createBoard(playerObject.board, boardDOM, isHidden);
 	};
 
-	randomP1Btn.addEventListener('click', () => {
-		randomizePlayerShips(game.p1, p1BoardDOM, false);
-		renderShipDock();
-		startMatchBtn.classList.remove('hidden');
-		setupDragAndBoard();
-	});
-
 	const updateOrientationUI = () => {
 		const rotateText = document.querySelector('#rotate-text');
 		if (rotateText) {
@@ -60,25 +55,6 @@ export function screenController() {
 			currentOrientation === 'vertical'
 		);
 	};
-
-	rotateBtn.addEventListener('click', () => {
-		currentOrientation =
-			currentOrientation === 'horizontal' ? 'vertical' : 'horizontal';
-
-		updateOrientationUI();
-	});
-
-	startMatchBtn.addEventListener('click', () => {
-		randomP1Btn.classList.add('hidden');
-		startMatchBtn.classList.add('hidden');
-		isGameStarted = true;
-
-		const dockTitle = document.querySelector('#dock-status-title');
-		if (dockTitle) {
-			dockTitle.textContent = 'Fleet sailing';
-		}
-		humanMessage.textContent = 'Fleet deployed! Your turn to attack!';
-	});
 
 	const renderShipDock = () => {
 		shipDockDOM.textContent = '';
@@ -134,9 +110,6 @@ export function screenController() {
 	};
 
 	const setupDragAndBoard = () => {
-		let draggedShipElement = null;
-		let pickedUpShipName = null;
-
 		const dockShips = document.querySelectorAll('.dock-ship');
 		dockShips.forEach((shipEl) => {
 			shipEl.addEventListener('dragstart', (e) => {
@@ -189,11 +162,28 @@ export function screenController() {
 						origOrient: originalOrientation,
 					},
 				};
+				const matchingSquares = p1BoardDOM.querySelectorAll(
+					`[data-ship-name="${shipName}"]`
+				);
+				matchingSquares.forEach((sq) => sq.classList.add('dragging'));
+			});
 
-				game.p1.board.removeShipFromDataMatrix(shipName);
+			shipSquare.addEventListener('dragend', () => {
+				if (isGameStarted) return;
 
-				createBoard(game.p1.board, p1BoardDOM, false);
-				setupDragAndBoard();
+				if (pickedUpShipName !== null) {
+					const name = draggedShipElement.dataset.name;
+					game.p1.board.removeShipFromDataMatrix(name);
+					humanMessage.textContent = `${name} returned to the dock.`;
+
+					draggedShipElement = null;
+					pickedUpShipName = null;
+					createBoard(game.p1.board, p1BoardDOM, false);
+					renderShipDock();
+					setupDragAndBoard();
+					startMatchBtn.classList.add('hidden');
+					randomP1Btn.classList.remove('hidden');
+				}
 			});
 
 			shipSquare.addEventListener('dblclick', () => {
@@ -349,6 +339,10 @@ export function screenController() {
 			const orientationToUse = draggedShipElement.dataset.origOrient
 				? draggedShipElement.dataset.origOrient
 				: currentOrientation;
+
+			if (pickedUpShipName !== null) {
+				game.p1.board.removeShipFromDataMatrix(name);
+			}
 
 			const placementSuccessful = game.p1.board.placeShip(
 				shipObject,
@@ -546,8 +540,40 @@ export function screenController() {
 		}, 1000);
 	});
 
+	randomP1Btn.addEventListener('click', () => {
+		randomizePlayerShips(game.p1, p1BoardDOM, false);
+		renderShipDock();
+		startMatchBtn.classList.remove('hidden');
+		setupDragAndBoard();
+	});
+
 	restartBtn.addEventListener('click', () => {
 		startNewGame();
+	});
+
+	rotateBtn.addEventListener('click', () => {
+		currentOrientation =
+			currentOrientation === 'horizontal' ? 'vertical' : 'horizontal';
+
+		updateOrientationUI();
+	});
+
+	startMatchBtn.addEventListener('click', () => {
+		randomP1Btn.classList.add('hidden');
+		startMatchBtn.classList.add('hidden');
+		isGameStarted = true;
+
+		const dockTitle = document.querySelector('#dock-status-title');
+		if (dockTitle) {
+			dockTitle.textContent = 'Fleet sailing';
+		}
+		humanMessage.textContent = 'Fleet deployed! Your turn to attack!';
+	});
+
+	shipDockDOM.addEventListener('dragover', (e) => {
+		if (!isGameStarted && pickedUpShipName !== null) {
+			e.preventDefault();
+		}
 	});
 
 	startNewGame();
