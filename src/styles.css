@@ -2,9 +2,6 @@
 
 :root {
 	--font-family: 'Inter', sans-serif;
-	@supports (font-variation-settings: normal) {
-		font-family: 'Inter var', sans-serif;
-	}
 
 	--font-size-sm: 0.875rem;
 	--font-size-base: 1rem;
