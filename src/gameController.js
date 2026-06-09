@@ -34,10 +34,6 @@ export function gameController() {
 
 	const getEnemy = () => (activePlayer === p1 ? comp : p1);
 
-	const switchTurn = () => {
-		activePlayer = getEnemy();
-	};
-
 	const checkWin = () => {
 		if (p1.board.allSunk() || comp.board.allSunk()) {
 			gameOver = true;
@@ -162,7 +158,6 @@ export function gameController() {
 		playComputerTurn,
 		getEnemy,
 		getActivePlayer,
-		switchTurn,
 		p1,
 		comp,
 		isGameOver: () => gameOver,
