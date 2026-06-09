@@ -1,38 +1,35 @@
 import { ship } from './ship.js';
 
+const SHIP_SIZES = [2, 3, 3, 4, 5];
+const SHIP_NAMES = [
+	'Patrol Boat',
+	'Submarine',
+	'Destroyer',
+	'Battleship',
+	'Carrier',
+];
+
 export function gameBoard() {
-	const missedShots = [];
-	const hitShots = [];
+	let missedShots = [];
+	let hitShots = [];
 	let board = Array.from({ length: 10 }, () => Array(10).fill(null));
 	let ships = [];
 
-	const resetBoard = () => {
-		board = Array.from({ length: 10 }, () => Array(10).fill(null));
-		missedShots.length = 0;
-		hitShots.length = 0;
-
+	const initializeShips = () => {
 		ships = [];
 		for (let i = 0; i < 5; i++) {
-			ships.push(ship(shipsSizes[i], shipNames[i]));
+			ships.push(ship(SHIP_SIZES[i], SHIP_NAMES[i]));
 		}
 	};
 
-	const getSquare = (x, y) => {
-		return board[x][y];
+	const resetBoard = () => {
+		board = Array.from({ length: 10 }, () => Array(10).fill(null));
+		missedShots = [];
+		hitShots = [];
+		initializeShips();
 	};
 
-	const shipsSizes = [2, 3, 3, 4, 5];
-	const shipNames = [
-		'Patrol Boat',
-		'Submarine',
-		'Destroyer',
-		'Battleship',
-		'Carrier',
-	];
-
-	for (let i = 0; i < 5; i++) {
-		ships.push(ship(shipsSizes[i], shipNames[i]));
-	}
+	const getSquare = (x, y) => board[x][y];
 
 	const isValidPlacement = (ship, x, y, orientation) => {
 		if (orientation === 'horizontal') {
@@ -89,9 +86,7 @@ export function gameBoard() {
 		}
 	};
 
-	const allSunk = () => {
-		return ships.every((ship) => ship.isSunk());
-	};
+	const allSunk = () => ships.every((ship) => ship.isSunk());
 
 	const getMissedShots = () => missedShots;
 
@@ -106,6 +101,8 @@ export function gameBoard() {
 			}
 		}
 	};
+
+	initializeShips();
 
 	return {
 		ships,
