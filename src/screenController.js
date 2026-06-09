@@ -11,8 +11,10 @@ export function screenController() {
 	const restartBtn = document.querySelector('#restart-btn');
 	const randomP1Btn = document.querySelector('#random-p1-btn');
 	const rotateBtn = document.querySelector('#rotate-btn');
+	const rotateText = document.querySelector('#rotate-text');
 	const startMatchBtn = document.querySelector('#start-match-btn');
 	const shipDockDOM = document.querySelector('#ship-dock');
+	const dockTitle = document.querySelector('#dock-status-title');
 
 	let game;
 	let isComputerThinking;
@@ -43,7 +45,6 @@ export function screenController() {
 	};
 
 	const updateOrientationUI = () => {
-		const rotateText = document.querySelector('#rotate-text');
 		if (rotateText) {
 			rotateText.textContent =
 				currentOrientation.charAt(0).toUpperCase() +
@@ -99,7 +100,6 @@ export function screenController() {
 			});
 		});
 
-		const dockTitle = document.querySelector('#dock-status-title');
 		if (dockTitle) {
 			if (unplacedCount > 0) {
 				dockTitle.textContent = `In dock: ${unplacedCount}`;
@@ -109,212 +109,272 @@ export function screenController() {
 		}
 	};
 
+	const getOccupiedSquares = (startX, startY, length, orientation) => {
+		const squares = [];
+		for (let i = 0; i < length; i++) {
+			const targetX = orientation === 'horizontal' ? startX + i : startX;
+			const targetY = orientation === 'vertical' ? startY + i : startY;
+			squares.push({ x: targetX, y: targetY });
+		}
+		return squares;
+	};
+
+	const clearHoverEffects = () => {
+		const allSquares = p1BoardDOM.querySelectorAll('.square');
+		allSquares.forEach((sq) => {
+			sq.classList.remove('hover-valid', 'hover-invalid');
+		});
+	};
+
+	const handleDockDragStart = (e) => {
+		if (isGameStarted) {
+			e.preventDefault();
+			return;
+		}
+		const shipEl = e.currentTarget;
+		draggedShipElement = shipEl;
+		pickedUpShipName = null;
+		e.dataTransfer.setData('text/plain', shipEl.dataset.name);
+	};
+
+	const handleBoardDragStart = (e) => {
+		if (isGameStarted) return e.preventDefault();
+
+		const shipSquare = e.currentTarget;
+		const shipName = shipSquare.dataset.shipName;
+		pickedUpShipName = shipName;
+
+		const shipObject = game.p1.board.ships.find((s) => s.name === shipName);
+
+		let headX = null;
+		let headY = null;
+		let originalOrientation = 'horizontal';
+
+		for (let y = 0; y < 10; y++) {
+			for (let x = 0; x < 10; x++) {
+				const cell = game.p1.board.getSquare(x, y);
+				if (cell && cell.name === shipName) {
+					if (headX === null && headY === null) {
+						headX = x;
+						headY = y;
+					} else if (x === headX && y > headY) {
+						originalOrientation = 'vertical';
+					}
+				}
+			}
+		}
+
+		draggedShipElement = {
+			dataset: {
+				name: shipName,
+				length: shipObject.length,
+				origX: headX,
+				origY: headY,
+				origOrient: originalOrientation,
+			},
+		};
+
+		const matchingSquares = p1BoardDOM.querySelectorAll(
+			`[data-ship-name="${shipName}"]`
+		);
+		matchingSquares.forEach((sq) => sq.classList.add('dragging'));
+	};
+
+	const handleBoardDragEnd = () => {
+		if (isGameStarted) return;
+
+		if (pickedUpShipName !== null) {
+			const name = draggedShipElement.dataset.name;
+			game.p1.board.removeShipFromDataMatrix(name);
+			humanMessage.textContent = `${name} returned to the dock.`;
+
+			draggedShipElement = null;
+			pickedUpShipName = null;
+			createBoard(game.p1.board, p1BoardDOM, false);
+			renderShipDock();
+			setupDragAndBoard();
+			startMatchBtn.classList.add('hidden');
+			randomP1Btn.classList.remove('hidden');
+		}
+	};
+
+	const handleBoardDoubleClick = (e) => {
+		if (isGameStarted) return;
+
+		const shipSquare = e.currentTarget;
+		const shipName = shipSquare.dataset.shipName;
+		const shipObject = game.p1.board.ships.find((s) => s.name === shipName);
+
+		if (!shipObject) return;
+
+		let headX = null;
+		let headY = null;
+		let shipActualOrient = 'horizontal';
+
+		for (let y = 0; y < 10; y++) {
+			for (let x = 0; x < 10; x++) {
+				const cell = game.p1.board.getSquare(x, y);
+				if (cell && cell.name === shipName) {
+					if (headX === null && headY === null) {
+						headX = x;
+						headY = y;
+					} else if (x === headX && y > headY) {
+						shipActualOrient = 'vertical';
+					}
+				}
+			}
+		}
+		const flippedOrient =
+			shipActualOrient === 'horizontal' ? 'vertical' : 'horizontal';
+
+		game.p1.board.removeShipFromDataMatrix(shipName);
+
+		const canRotate = game.p1.board.isValidPlacement(
+			shipObject,
+			headX,
+			headY,
+			flippedOrient
+		);
+
+		if (canRotate) {
+			game.p1.board.placeShip(shipObject, headX, headY, flippedOrient);
+			humanMessage.textContent = `${shipObject.name} rotated successfully!`;
+		} else {
+			game.p1.board.placeShip(shipObject, headX, headY, shipActualOrient);
+			humanMessage.textContent = `Cannot rotate ${shipObject.name} here! Blocked or out of bounds.`;
+		}
+
+		createBoard(game.p1.board, p1BoardDOM, false);
+		renderShipDock();
+		setupDragAndBoard();
+	};
+
+	const handleDragEnter = (e) => {
+		if (!draggedShipElement || isGameStarted) return;
+		if (!e.target.classList.contains('square')) return;
+
+		clearHoverEffects();
+
+		const startX = parseInt(e.target.dataset.x);
+		const startY = parseInt(e.target.dataset.y);
+		const length = parseInt(draggedShipElement.dataset.length);
+		const name = draggedShipElement.dataset.name;
+
+		const shipObject = game.p1.board.ships.find((s) => s.name === name);
+
+		const orientationToUse = draggedShipElement.dataset.origOrient
+			? draggedShipElement.dataset.origOrient
+			: currentOrientation;
+		const isValid = game.p1.board.isValidPlacement(
+			shipObject,
+			startX,
+			startY,
+			orientationToUse
+		);
+
+		const coordinates = getOccupiedSquares(
+			startX,
+			startY,
+			length,
+			orientationToUse
+		);
+
+		coordinates.forEach((coord) => {
+			const targetSquare = p1BoardDOM.querySelector(
+				`[data-x="${coord.x}"][data-y="${coord.y}"]`
+			);
+			if (targetSquare) {
+				targetSquare.classList.add(
+					isValid ? 'hover-valid' : 'hover-invalid'
+				);
+			}
+		});
+	};
+
+	const handleBoardDrop = (e) => {
+		if (!draggedShipElement || isGameStarted) return;
+		e.preventDefault();
+		clearHoverEffects();
+
+		const target = e.target.closest('.square');
+		if (!target) return;
+
+		const startX = parseInt(target.dataset.x);
+		const startY = parseInt(target.dataset.y);
+		const name = draggedShipElement.dataset.name;
+
+		const shipObject = game.p1.board.ships.find((s) => s.name === name);
+
+		const orientationToUse = draggedShipElement.dataset.origOrient
+			? draggedShipElement.dataset.origOrient
+			: currentOrientation;
+
+		if (pickedUpShipName !== null) {
+			game.p1.board.removeShipFromDataMatrix(name);
+		}
+
+		const placementSuccessful = game.p1.board.placeShip(
+			shipObject,
+			startX,
+			startY,
+			orientationToUse
+		);
+
+		if (placementSuccessful) {
+			if (
+				pickedUpShipName === null &&
+				typeof draggedShipElement.remove === 'function'
+			) {
+				draggedShipElement.remove();
+			}
+			createBoard(game.p1.board, p1BoardDOM, false);
+
+			renderShipDock();
+
+			if (shipDockDOM.children.length === 0) {
+				startMatchBtn.classList.remove('hidden');
+				randomP1Btn.classList.add('hidden');
+				humanMessage.textContent =
+					'All ships deployed! Click Commit Fleet to start your battle!';
+			}
+		} else {
+			if (pickedUpShipName !== null) {
+				const origX = parseInt(draggedShipElement.dataset.origX);
+				const origY = parseInt(draggedShipElement.dataset.origY);
+				const origOrient = draggedShipElement.dataset.origOrient;
+
+				game.p1.board.placeShip(shipObject, origX, origY, origOrient);
+				humanMessage.textContent =
+					'Invalid placement! Ship returned to its original position.';
+			}
+			createBoard(game.p1.board, p1BoardDOM, false);
+			renderShipDock();
+		}
+		draggedShipElement = null;
+		pickedUpShipName = null;
+		setupDragAndBoard();
+	};
+
 	const setupDragAndBoard = () => {
 		const dockShips = document.querySelectorAll('.dock-ship');
 		dockShips.forEach((shipEl) => {
-			shipEl.addEventListener('dragstart', (e) => {
-				if (isGameStarted) {
-					e.preventDefault();
-					return;
-				}
-				draggedShipElement = shipEl;
-				pickedUpShipName = null;
-				e.dataTransfer.setData('text/plain', shipEl.dataset.name);
-			});
+			shipEl.addEventListener('dragstart', handleDockDragStart);
 		});
 
 		const boardShips = p1BoardDOM.querySelectorAll('.square.ship');
 		boardShips.forEach((shipSquare) => {
-			shipSquare.addEventListener('dragstart', (e) => {
-				if (isGameStarted) return e.preventDefault();
+			shipSquare.addEventListener('dragstart', handleBoardDragStart);
 
-				const shipName = shipSquare.dataset.shipName;
-				pickedUpShipName = shipName;
+			shipSquare.addEventListener('dragend', handleBoardDragEnd);
 
-				const shipObject = game.p1.board.ships.find(
-					(s) => s.name === shipName
-				);
-
-				let headX = null;
-				let headY = null;
-				let originalOrientation = 'horizontal';
-
-				for (let y = 0; y < 10; y++) {
-					for (let x = 0; x < 10; x++) {
-						const cell = game.p1.board.getSquare(x, y);
-						if (cell && cell.name === shipName) {
-							if (headX === null && headY === null) {
-								headX = x;
-								headY = y;
-							} else if (x === headX && y > headY) {
-								originalOrientation = 'vertical';
-							}
-						}
-					}
-				}
-
-				draggedShipElement = {
-					dataset: {
-						name: shipName,
-						length: shipObject.length,
-						origX: headX,
-						origY: headY,
-						origOrient: originalOrientation,
-					},
-				};
-				const matchingSquares = p1BoardDOM.querySelectorAll(
-					`[data-ship-name="${shipName}"]`
-				);
-				matchingSquares.forEach((sq) => sq.classList.add('dragging'));
-			});
-
-			shipSquare.addEventListener('dragend', () => {
-				if (isGameStarted) return;
-
-				if (pickedUpShipName !== null) {
-					const name = draggedShipElement.dataset.name;
-					game.p1.board.removeShipFromDataMatrix(name);
-					humanMessage.textContent = `${name} returned to the dock.`;
-
-					draggedShipElement = null;
-					pickedUpShipName = null;
-					createBoard(game.p1.board, p1BoardDOM, false);
-					renderShipDock();
-					setupDragAndBoard();
-					startMatchBtn.classList.add('hidden');
-					randomP1Btn.classList.remove('hidden');
-				}
-			});
-
-			shipSquare.addEventListener('dblclick', () => {
-				if (isGameStarted) return;
-
-				const shipName = shipSquare.dataset.shipName;
-				const shipObject = game.p1.board.ships.find(
-					(s) => s.name === shipName
-				);
-
-				if (!shipObject) return;
-
-				let headX = null;
-				let headY = null;
-				let shipActualOrient = 'horizontal';
-
-				for (let y = 0; y < 10; y++) {
-					for (let x = 0; x < 10; x++) {
-						const cell = game.p1.board.getSquare(x, y);
-						if (cell && cell.name === shipName) {
-							if (headX === null && headY === null) {
-								headX = x;
-								headY = y;
-							} else if (x === headX && y > headY) {
-								shipActualOrient = 'vertical';
-							}
-						}
-					}
-				}
-				const flippedOrient =
-					shipActualOrient === 'horizontal'
-						? 'vertical'
-						: 'horizontal';
-
-				game.p1.board.removeShipFromDataMatrix(shipName);
-
-				const canRotate = game.p1.board.isValidPlacement(
-					shipObject,
-					headX,
-					headY,
-					flippedOrient
-				);
-
-				if (canRotate) {
-					game.p1.board.placeShip(
-						shipObject,
-						headX,
-						headY,
-						flippedOrient
-					);
-					humanMessage.textContent = `${shipObject.name} rotated successfully!`;
-				} else {
-					game.p1.board.placeShip(
-						shipObject,
-						headX,
-						headY,
-						shipActualOrient
-					);
-					humanMessage.textContent = `Cannot rotate ${shipObject.name} here! Blocked or out of bounds.`;
-				}
-
-				createBoard(game.p1.board, p1BoardDOM, false);
-				renderShipDock();
-				setupDragAndBoard();
-			});
+			shipSquare.addEventListener('dblclick', handleBoardDoubleClick);
 		});
-
-		const getOccupiedSquares = (startX, startY, length, orientation) => {
-			const squares = [];
-			for (let i = 0; i < length; i++) {
-				const targetX =
-					orientation === 'horizontal' ? startX + i : startX;
-				const targetY =
-					orientation === 'vertical' ? startY + i : startY;
-				squares.push({ x: targetX, y: targetY });
-			}
-			return squares;
-		};
-
-		const clearHoverEffects = () => {
-			const allSquares = p1BoardDOM.querySelectorAll('.square');
-			allSquares.forEach((sq) => {
-				sq.classList.remove('hover-valid', 'hover-invalid');
-			});
-		};
 
 		p1BoardDOM.addEventListener('dragover', (e) => {
 			e.preventDefault();
 		});
 
-		p1BoardDOM.addEventListener('dragenter', (e) => {
-			if (!draggedShipElement || isGameStarted) return;
-			if (!e.target.classList.contains('square')) return;
-
-			clearHoverEffects();
-
-			const startX = parseInt(e.target.dataset.x);
-			const startY = parseInt(e.target.dataset.y);
-			const length = parseInt(draggedShipElement.dataset.length);
-			const name = draggedShipElement.dataset.name;
-
-			const shipObject = game.p1.board.ships.find((s) => s.name === name);
-
-			const orientationToUse = draggedShipElement.dataset.origOrient
-				? draggedShipElement.dataset.origOrient
-				: currentOrientation;
-			const isValid = game.p1.board.isValidPlacement(
-				shipObject,
-				startX,
-				startY,
-				orientationToUse
-			);
-
-			const coordinates = getOccupiedSquares(
-				startX,
-				startY,
-				length,
-				orientationToUse
-			);
-
-			coordinates.forEach((coord) => {
-				const targetSquare = p1BoardDOM.querySelector(
-					`[data-x="${coord.x}"][data-y="${coord.y}"]`
-				);
-				if (targetSquare) {
-					targetSquare.classList.add(
-						isValid ? 'hover-valid' : 'hover-invalid'
-					);
-				}
-			});
-		});
+		p1BoardDOM.addEventListener('dragenter', handleDragEnter);
 
 		p1BoardDOM.addEventListener('dragleave', (e) => {
 			if (e.relatedTarget && !p1BoardDOM.contains(e.relatedTarget)) {
@@ -322,74 +382,7 @@ export function screenController() {
 			}
 		});
 
-		p1BoardDOM.addEventListener('drop', (e) => {
-			if (!draggedShipElement || isGameStarted) return;
-			e.preventDefault();
-			clearHoverEffects();
-
-			const target = e.target.closest('.square');
-			if (!target) return;
-
-			const startX = parseInt(target.dataset.x);
-			const startY = parseInt(target.dataset.y);
-			const name = draggedShipElement.dataset.name;
-
-			const shipObject = game.p1.board.ships.find((s) => s.name === name);
-
-			const orientationToUse = draggedShipElement.dataset.origOrient
-				? draggedShipElement.dataset.origOrient
-				: currentOrientation;
-
-			if (pickedUpShipName !== null) {
-				game.p1.board.removeShipFromDataMatrix(name);
-			}
-
-			const placementSuccessful = game.p1.board.placeShip(
-				shipObject,
-				startX,
-				startY,
-				orientationToUse
-			);
-
-			if (placementSuccessful) {
-				if (
-					pickedUpShipName === null &&
-					typeof draggedShipElement.remove === 'function'
-				) {
-					draggedShipElement.remove();
-				}
-				createBoard(game.p1.board, p1BoardDOM, false);
-
-				renderShipDock();
-
-				if (shipDockDOM.children.length === 0) {
-					startMatchBtn.classList.remove('hidden');
-					randomP1Btn.classList.add('hidden');
-					humanMessage.textContent =
-						'All ships deployed! Click Commit Fleet to start your battle!';
-				}
-			} else {
-				if (pickedUpShipName !== null) {
-					const origX = parseInt(draggedShipElement.dataset.origX);
-					const origY = parseInt(draggedShipElement.dataset.origY);
-					const origOrient = draggedShipElement.dataset.origOrient;
-
-					game.p1.board.placeShip(
-						shipObject,
-						origX,
-						origY,
-						origOrient
-					);
-					humanMessage.textContent =
-						'Invalid placement! Ship returned to its original position.';
-				}
-				createBoard(game.p1.board, p1BoardDOM, false);
-				renderShipDock();
-			}
-			draggedShipElement = null;
-			pickedUpShipName = null;
-			setupDragAndBoard();
-		});
+		p1BoardDOM.addEventListener('drop', handleBoardDrop);
 	};
 
 	const createBoard = (gameBoard, parentElement, isHidden) => {
@@ -563,7 +556,6 @@ export function screenController() {
 		startMatchBtn.classList.add('hidden');
 		isGameStarted = true;
 
-		const dockTitle = document.querySelector('#dock-status-title');
 		if (dockTitle) {
 			dockTitle.textContent = 'Fleet sailing';
 		}
