@@ -224,7 +224,6 @@ export function screenController() {
 			pickedUpShipName = null;
 			createBoard(game.p1.board, p1BoardDOM, false);
 			renderShipDock();
-			setupDragAndBoard();
 			startMatchBtn.classList.add('hidden');
 			randomP1Btn.classList.remove('hidden');
 		}
@@ -276,7 +275,6 @@ export function screenController() {
 
 		createBoard(game.p1.board, p1BoardDOM, false);
 		renderShipDock();
-		setupDragAndBoard();
 	};
 
 	const handleDragEnter = (e) => {
@@ -377,24 +375,41 @@ export function screenController() {
 		}
 		draggedShipElement = null;
 		pickedUpShipName = null;
-		setupDragAndBoard();
-	};
-
-	const setupDragAndBoard = () => {
-		const dockShips = document.querySelectorAll('.dock-ship');
-		dockShips.forEach((shipEl) => {
-			shipEl.addEventListener('dragstart', handleDockDragStart);
-		});
-
-		const boardShips = p1BoardDOM.querySelectorAll('.square.ship');
-		boardShips.forEach((shipSquare) => {
-			shipSquare.addEventListener('dragstart', handleBoardDragStart);
-			shipSquare.addEventListener('dragend', handleBoardDragEnd);
-			shipSquare.addEventListener('dblclick', handleBoardDoubleClick);
-		});
 	};
 
 	const initPersistentListeners = () => {
+		p1BoardDOM.addEventListener('dragstart', (e) => {
+			const shipSquare = e.target.closest('.square.ship');
+			if (!shipSquare || isGameStarted) return;
+
+			const shipName = shipSquare.dataset.shipName;
+			pickedUpShipName = shipName;
+
+			const shipObject = game.p1.board.ships.find(
+				(s) => s.name === shipName
+			);
+			const shipLocation = locateShipOnBoard(shipName);
+			if (!shipLocation) return;
+
+			draggedShipElement = {
+				dataset: {
+					name: shipName,
+					length: shipObject.length,
+					origX: shipLocation.headX,
+					origY: shipLocation.headY,
+					origOrient: shipLocation.orientation,
+				},
+			};
+		});
+
+		p1BoardDOM.addEventListener('dragend', handleBoardDragEnd);
+
+		p1BoardDOM.addEventListener('dblclick', (e) => {
+			const shipSquare = e.target.closest('.square.ship');
+			if (!shipSquare || isGameStarted) return;
+			handleBoardDoubleClick(e);
+		});
+
 		p1BoardDOM.addEventListener('dragover', (e) => e.preventDefault());
 		p1BoardDOM.addEventListener('dragenter', handleDragEnter);
 		p1BoardDOM.addEventListener('dragleave', (e) => {
@@ -404,6 +419,15 @@ export function screenController() {
 		});
 		p1BoardDOM.addEventListener('drop', handleBoardDrop);
 
+		shipDockDOM.addEventListener('dragstart', (e) => {
+			const shipEl = e.target.closest('.dock-ship');
+			if (!shipEl || isGameStarted) return;
+
+			draggedShipElement = shipEl;
+			pickedUpShipName = null;
+			e.dataTransfer.setData('text/plain', shipEl.dataset.name);
+		});
+
 		shipDockDOM.addEventListener('dragover', (e) => {
 			if (!isGameStarted && pickedUpShipName !== null) e.preventDefault();
 		});
@@ -412,7 +436,6 @@ export function screenController() {
 			randomizePlayerShips(game.p1, p1BoardDOM, false);
 			renderShipDock();
 			startMatchBtn.classList.remove('hidden');
-			setupDragAndBoard();
 		});
 
 		restartBtn.addEventListener('click', startNewGame);
@@ -464,8 +487,6 @@ export function screenController() {
 
 		createBoard(game.p1.board, p1BoardDOM, false);
 		createBoard(game.comp.board, compBoardDOM, true);
-
-		setupDragAndBoard();
 	};
 
 	compBoardDOM.addEventListener('click', (e) => {
