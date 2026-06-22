@@ -116,6 +116,7 @@ button:hover {
 }
 
 #restart-btn {
+	display: inline-block;
 	padding: var(--spacing-sm);
 	background-color: var(--clr-sea);
 	color: var(--clr-bg);

@@ -449,6 +449,8 @@ export function screenController() {
 		startMatchBtn.addEventListener('click', () => {
 			randomP1Btn.classList.add('hidden');
 			startMatchBtn.classList.add('hidden');
+			restartBtn.classList.remove('hidden');
+
 			isGameStarted = true;
 
 			if (dockTitle) dockTitle.textContent = 'Fleet sailing';
@@ -501,7 +503,6 @@ export function screenController() {
 		if (typeof roundResult === 'string') {
 			humanMessage.textContent = roundResult;
 			if (game.isGameOver()) {
-				restartBtn.classList.remove('hidden');
 				restartBtn.classList.add('pop-attention');
 			}
 			return;
@@ -524,7 +525,6 @@ export function screenController() {
 		if (game.isGameOver()) {
 			humanMessage.textContent = 'Human Wins!';
 			compMessage.textContent = '';
-			restartBtn.classList.remove('hidden');
 			restartBtn.classList.add('pop-attention');
 			return;
 		}
@@ -555,7 +555,6 @@ export function screenController() {
 				humanMessage.textContent =
 					'Computer Wins! Your fleet was destroyed.';
 				compMessage.textContent = '';
-				restartBtn.classList.remove('hidden');
 				setTimeout(() => {
 					restartBtn.classList.add('pop-attention');
 				}, 10);
