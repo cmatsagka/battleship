@@ -32,10 +32,15 @@ export function gameBoard() {
 	const getSquare = (x, y) => board[y][x];
 
 	const isValidPlacement = (ship, x, y, orientation) => {
+		const boardHeight = board.length;
+		const boardWidth = board[0].length;
+
+		if (x < 0 || y < 0 || x >= boardWidth || y >= boardHeight) return false;
+
 		if (orientation === 'horizontal') {
-			if (ship.length + x > 10 || y > 9) return false;
+			if (ship.length + x > boardWidth) return false;
 		} else {
-			if (ship.length + y > 10 || x > 9) return false;
+			if (ship.length + y > boardHeight) return false;
 		}
 
 		for (let i = 0; i < ship.length; i++) {
@@ -92,8 +97,11 @@ export function gameBoard() {
 	const getHitShots = () => hitShots;
 
 	const removeShipFromDataMatrix = (shipName) => {
-		for (let y = 0; y < 10; y++) {
-			for (let x = 0; x < 10; x++) {
+		const boardHeight = board.length;
+		const boardWidth = board[0].length;
+
+		for (let y = 0; y < boardHeight; y++) {
+			for (let x = 0; x < boardWidth; x++) {
 				if (board[y][x] && board[y][x].name === shipName) {
 					board[y][x] = null;
 				}

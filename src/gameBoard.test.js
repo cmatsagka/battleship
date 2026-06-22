@@ -52,6 +52,24 @@ describe('gameBoard factory', () => {
 			);
 		});
 
+		test('isValidPlacement allows placement exactly on the edge', () => {
+			const board = gameBoard();
+			const patrol = board.ships[0];
+
+			expect(board.isValidPlacement(patrol, 8, 0, 'horizontal')).toBe(
+				true
+			);
+		});
+
+		test('isValidPlacement rejects placement just one cell past the edge', () => {
+			const board = gameBoard();
+			const patrol = board.ships[0];
+
+			expect(board.isValidPlacement(patrol, 9, 0, 'horizontal')).toBe(
+				false
+			);
+		});
+
 		test('placeShip returns true on success', () => {
 			const board = gameBoard();
 			const sub = board.ships[0];
