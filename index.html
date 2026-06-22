@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Battleship</title>
+	<script defer src="main.js"></script></head>
+	<body>
+		<header class="game-header">
+			<div class="header-controls">
+				<h1>Battleship</h1>
+				<button id="restart-btn" class="hidden">New Game</button>
+			</div>
+			<div class="message-container" aria-live="polite">
+				<p id="human-message" class="message"></p>
+				<p id="comp-message" class="message"></p>
+			</div>
+		</header>
+		<main class="game-container">
+			<section id="setup-phase" class="setup-wrapper">
+				<div class="setup-controls">
+					<button id="random-p1-btn">Randomize Fleet</button>
+					<button id="start-match-btn" class="hidden">
+						Commit Fleet & Start
+					</button>
+				</div>
+				<div id="fleet-container">
+					<h3 id="dock-status-title">In dock: 5</h3>
+					<div id="ship-dock" aria-label="Ship deployment dock"></div>
+					<button
+						id="rotate-btn"
+						data-orientation="horizontal"
+						aria-label="Toggle Ship Orientation"
+					>
+						<span class="rotate-icon">-></span>
+						<span id="rotate-text">Horizontal</span>
+					</button>
+				</div>
+			</section>
+			<div class="boards-container">
+				<section
+					class="board-section player"
+					aria-labelledby="player-heading"
+				>
+					<h2 id="player-heading">Player's Board</h2>
+					<div
+						id="human-board"
+						class="board"
+						role="grid"
+						aria-label="Your grid map"
+					></div>
+				</section>
+				<section
+					class="board-section computer"
+					aria-labelledby="computer-heading"
+				>
+					<h2 id="computer-heading">Computer's Board</h2>
+					<div
+						id="comp-board"
+						class="board"
+						role="grid"
+						aria-label="Enemy radar map"
+					></div>
+				</section>
+			</div>
+		</main>
+		<footer class="site-footer">
+			<p>Build with care and vanilla</p>
+		</footer>
+	</body>
+</html>
