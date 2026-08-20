@@ -2,13 +2,9 @@
 
 A modern, responsive, and test-driven implementation of the classic Battleship board game built entirely with vanilla JavaScript, HTML5, and CSS3. The game features interactive drag-and-drop mechanics, real-time board mutations, custom AI targeting behaviors, and a complete Jest unit-testing suite.
 
----
-
-## 🚀 Live Demo
-
 🌐 [View Live Application](https://cmatsagka.github.io/battleship/)
 
----
+## ![Battleship Preview Image](src/image.png)
 
 ## ✨ Features
 
